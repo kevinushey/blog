@@ -1,0 +1,27 @@
+# Dependencies
+markdown:            kramdown
+highlighter:         pygments
+
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+relative_permalinks: true
+
+# Setup
+title:               Musings on R and C++
+tagline:             ''
+description:         ''
+url:                 http://kevinushey.github.io/blog/
+baseurl:             /blog
+paginate:            5
+exclude:             ['posts']
+
+# About/contact
+author:
+  name:              Kevin Ushey
+  url:               https://twitter.com/kevin_ushey
+  email:             kevinushey@gmail.com
+
+# Custom vars
+version:             1.0.0
