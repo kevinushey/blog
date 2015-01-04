@@ -4,7 +4,9 @@ title: First Post!
 tags: R
 ---
 
-This is the first post for my R + knitr + jekyll + poole powered blog.
+This is the first post for my `R` + [knitr](http://yihui.name/knitr/) +
+[jekyll](http://jekyllrb.com/) + [poole](https://github.com/poole/poole)
+powered blog.
 
 
 {% highlight r %}
@@ -30,7 +32,8 @@ a blog that was:
 I'm using a combination of [jekyll](http://jekyllrb.com/), which is used to
 generate the site itself; [poole](https://github.com/poole/poole) with the theme
 [Lanyon](http://lanyon.getpoole.com/), and a simple `make.R` script that converts
-`.Rmd` posts into `.md` that can be served on GitHub pages.
+`.Rmd` posts into `.md` that can be served on GitHub pages, which is driven
+mainly through the [knitr](http://yihui.name/knitr/) package.
 
 The `R` script that powers this website is fairly simple -- we call 
 `knitr::knit()`, with some knitr hooks + templating set up to support the
@@ -58,25 +61,30 @@ knitr::opts_chunk$set(
   results = 'markup'
 )
 
+# Ensure knitr documents are knit with this directory
+# (not 'post/') as the root directory
 knitr::opts_knit$set(root.dir = getwd())
-
-# Knit all of the .Rmd documents in post
-posts <- list.files("posts", full.names = TRUE)
 
 # Ensure the '_posts' directory exists
 if (!file.exists("_posts"))
   dir.create("_posts")
 
+# Knit all of the .Rmd documents in post
+posts <- list.files("posts", full.names = TRUE)
+
 for (inputPath in posts) {
 
+  # Build the input, output paths
   fileName <- basename(inputPath)
-  fileNameSansExtension <- tools::file_path_sans_ext(fileName)
+  fileNameSansExtension <-
+    tools::file_path_sans_ext(fileName)
 
   outputPath <- file.path(
     "_posts",
     paste(fileNameSansExtension, ".md", sep = '')
   )
 
+  # Knit away!
   knitr::knit(
     input = inputPath,
     output = outputPath
@@ -92,4 +100,9 @@ write a new article, I can just:
 2. Write something that may or may not be incredibly exciting to read,
 3. Call `make` to update the site.
 
-Neat!
+Then [GitHub Pages](https://pages.github.com/) takes care of calling Jekyll
+to produce the actual site to be served. Neat!
+
+The icing on the cake -- by giving the project an (empty) `DESCRIPTION` file,
+and telling RStudio that this is an `Makefile`-managed project, I can also
+rebuild the site right from RStudio with `Cmd + Shift + B`.

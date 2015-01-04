@@ -41,3 +41,7 @@ validation-report.json
 node_modules
 bower_components
 .Rproj.user
+.Rhistory
+
+# Other ignores
+posts/*.html
