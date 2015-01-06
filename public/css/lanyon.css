@@ -297,11 +297,6 @@ a.sidebar-nav-item:focus {
  * page is wrapped in `.page` and is only used on the page layout.
  */
 
-.page,
-.post {
-  margin-bottom: 4em;
-}
-
 /* Blog post or page title */
 .page-title,
 .post-title,
@@ -550,4 +545,8 @@ a.pagination-item:hover {
 /* Only one tweak for a reverse layout */
 .layout-reverse.sidebar-overlay #sidebar-checkbox:checked ~ .sidebar {
   box-shadow: -.25rem 0 .5rem rgba(0,0,0,.1);
+}
+
+.twitter-share-button {
+  width: 80px !important;
 }
