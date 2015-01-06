@@ -7,8 +7,8 @@ tags: R
 
 
 This is part one of an unboundedly large number of parts
-investigating some of, what I'll call, 'needless
-'inefficiencies' in `R`.
+investigating some of, what I'll call,
+'needless inefficiencies' in `R`.
 
 ## Preamble -- Why I Love R
 
