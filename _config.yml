@@ -13,7 +13,7 @@ title:               Musings on R and C++
 tagline:             ''
 description:         ''
 home:                http://kevinushey.github.io
-url:                 http://kevinushey.github.io/blog/
+url:                 http://kevinushey.github.io/blog
 baseurl:             /blog
 paginate:            5
 exclude:             ['posts']
