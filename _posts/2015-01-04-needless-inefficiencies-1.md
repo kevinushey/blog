@@ -99,7 +99,7 @@ function (x, n = 6L, ...)
     else min(n, length(x))
     x[seq_len(n)]
 }
-<bytecode: 0x7fc2e321bd50>
+<bytecode: 0x7fe2b0a35cd8>
 <environment: namespace:utils>
 {% endhighlight %}
 
@@ -121,7 +121,7 @@ function (x, n = 6L, ...)
     else min(n, xlen)
     x[seq.int(to = xlen, length.out = n)]
 }
-<bytecode: 0x7fc2e4481b90>
+<bytecode: 0x7fe2b0ca2600>
 <environment: namespace:utils>
 {% endhighlight %}
 
@@ -179,9 +179,9 @@ microbenchmark(
 
 {% highlight text %}
 Unit: microseconds
- expr    min     lq     mean median   uq   max neval cld
-    R 2936.0 4323.0 6314.636   4887 5317 49230   100   b
-  cpp  352.8  984.4 2517.561   1375 2698 39250   100  a 
+ expr    min   lq     mean median   uq   max neval cld
+    R 2918.0 3728 6563.544   4889 5603 45640   100   b
+  cpp  479.9 1001 2124.617   1137 2803 39520   100  a 
 {% endhighlight %}
 
 This (somewhat overly simplified) implementation has
@@ -263,10 +263,10 @@ microbenchmark(
 
 {% highlight text %}
 Unit: microseconds
- expr    min   lq     mean median   uq   max neval cld
-    R 3161.0 4755 8419.665   5458 7155 97080   100   b
-  Cpp  858.1 1043 2180.233   2239 2966  8024   100  a 
-  len  905.4 1148 3016.497   2527 3239 43970   100  a 
+ expr    min     lq     mean median   uq   max neval cld
+    R 2744.0 3522.0 4473.189   3756 5524  8209   100   b
+  Cpp  408.1  935.3 1980.496   1031 1232 47250   100  a 
+  len  570.7 1085.0 1714.773   1139 2559  5003   100  a 
 {% endhighlight %}
 
 Look at that -- basically on par with our `head_cpp`

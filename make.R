@@ -9,7 +9,8 @@ knitr::opts_chunk$set(
   out.extra = '',
   tidy = FALSE,
   comment = NA,
-  results = 'markup'
+  results = 'markup',
+  cache = TRUE
 )
 
 # Ensure knitr documents are knit with this directory
