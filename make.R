@@ -50,18 +50,14 @@ for (inputPath in posts) {
       next
   }
 
-  # Otherwise, generate a hash for the file and knit
-  else
-  {
-    md5sum <- tools::md5sum(inputPath)
-    cat(md5sum, file = hashPath, sep = "\n")
+  # Generate a hash for the file and knit
+  md5sum <- tools::md5sum(inputPath)
+  cat(md5sum, file = hashPath, sep = "\n")
 
-    # Knit away!
-    knitr::knit(
-      input = inputPath,
-      output = outputPath,
-      envir = new.env()
-    )
-  }
+  knitr::knit(
+    input = inputPath,
+    output = outputPath,
+    envir = new.env()
+  )
 
 }

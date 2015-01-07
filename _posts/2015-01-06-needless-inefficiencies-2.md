@@ -660,7 +660,7 @@ implementation that arises when the messiness of `drop` and
 
 One of the guiding tenants of `C++` is:
 
-> you don't pay for what you don't use
+> You don't pay for what you don't use.
 
 and this is a very nice thing to keep in mind when implementing
 functions and defining interfaces.
