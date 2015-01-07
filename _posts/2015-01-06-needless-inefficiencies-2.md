@@ -465,20 +465,20 @@ SEXP subset_df(SEXP x,
   int column_indices_n = column_indices.size();
   int row_indices_n = row_indices.size();
   
-  // Translate from R to C indices -- note that this could
-  // be optimized...
+  // Translate from R to C indices.
+  // This could be optimized...
   row_indices = row_indices - 1;
   column_indices = column_indices - 1;
 
   // Allocate the output 'data.frame'.
   List output = no_init(column_indices_n);
 
-  // Set the names, based on the names of 'x'. We'll assume
-  // it has names.
+  // Set the names, based on the names of 'x'.
+  // We'll assume it has names.
   CharacterVector x_names =
     as<CharacterVector>(Rf_getAttrib(x, R_NamesSymbol));
 
-  // Use Rcpp's sugar subsetting to subset / reorder names.
+  // Use Rcpp's sugar subsetting to subset names.
   output.attr("names") = x_names[column_indices];
 
   // Loop and fill!
@@ -489,8 +489,11 @@ SEXP subset_df(SEXP x,
     // child of 'x'.
     SEXP element = VECTOR_ELT(x, column_indices[j]);
 
-    // Get the 'rows' for that vector, and fill the output.
-    SEXP vec = PROTECT(Rf_allocVector(TYPEOF(element), row_indices_n));
+    // Get the 'rows' for that vector, and fill.
+    SEXP vec = PROTECT(
+      Rf_allocVector(TYPEOF(element), row_indices_n)
+    );
+    
     for (int i = 0; i < row_indices_n; ++i)
     {
       // Copying vectors is a pain in the butt, because we
@@ -499,19 +502,23 @@ SEXP subset_df(SEXP x,
       switch (TYPEOF(vec))
       {
       case REALSXP:
-        REAL(vec)[i] = REAL(element)[row_indices[i]];
+        REAL(vec)[i] =
+          REAL(element)[row_indices[i]];
         break;
       case INTSXP:
       case LGLSXP:
-        INTEGER(vec)[i] = INTEGER(element)[row_indices[i]];
+        INTEGER(vec)[i] =
+          INTEGER(element)[row_indices[i]];
         break;
       case STRSXP:
-        SET_STRING_ELT(vec, i, STRING_ELT(element, row_indices[i]));
+        SET_STRING_ELT(vec, i,
+          STRING_ELT(element, row_indices[i]));
         break;
       }
     }
 
-    // And make sure the output list now refers to that vector!
+    // And make sure the output list now
+    // refers to that vector!
     SET_VECTOR_ELT(output, j, vec);
 
     // Don't need to protect 'vec' anymore
@@ -522,7 +529,8 @@ SEXP subset_df(SEXP x,
   Rf_copyMostAttrib(x, output);
 
   // ... but set the row names manually.
-  Rf_setAttrib(output, R_RowNamesSymbol, IntegerVector::create(NA_INTEGER, -row_indices_n));
+  Rf_setAttrib(output, R_RowNamesSymbol,
+    IntegerVector::create(NA_INTEGER, -row_indices_n));
 
   return output;
 
@@ -590,7 +598,12 @@ how much does it really matter?
 
 {% highlight r %}
 library("microbenchmark")
-df <- data.frame(x = 1:1E2, y = sample(letters, 1E2, TRUE))
+
+df <- data.frame(
+  x = 1:1E2,
+  y = sample(letters, 1E2, TRUE)
+)
+
 microbenchmark(
   R = df[5:10, 2, drop = FALSE],
   Cpp = subset_df(df, 5:10, 2)
@@ -601,9 +614,9 @@ microbenchmark(
 
 {% highlight text %}
 Unit: microseconds
- expr    min      lq     mean median      uq     max neval cld
-    R 79.928 82.2910 98.75616 83.734 112.597 304.940   100   b
-  Cpp  2.960  3.6885  6.38308  5.538   5.896  40.451   100  a 
+ expr    min     lq     mean  median      uq     max neval cld
+    R 80.340 82.495 87.78901 83.8175 90.4315 227.307   100   b
+  Cpp  3.099  3.642  4.82325  4.0325  5.5970  29.331   100  a 
 {% endhighlight %}
 
 Yuck! `R` is really, really slow when it comes to taking
@@ -640,15 +653,21 @@ In the end, what we see is that `[.data.frame` is really just
 some calls to `[` (as a primitive dispatching to the internal,
 non-data.frame implementation), `.subset()`, and `.subset2()`.
 You can see such a simplified implementation in
-[`dplyr](https://github.com/hadley/dplyr/blob/366fa198c46084957f8a756c70263e23ea2a3118/R/tbl-df.r#L114-L146)
+[`dplyr`](https://github.com/hadley/dplyr/blob/366fa198c46084957f8a756c70263e23ea2a3118/R/tbl-df.r#L114-L146)
 -- note the much more relatively clean
 implementation that arises when the messiness of `drop` and
 `row.names` is avoided!
 
-One of the guiding tenants of C++ is, *you don't pay for what you don't use*,
+One of the guiding tenants of `C++` is:
+
+> you don't pay for what you don't use
+
 and this is a very nice thing to keep in mind when implementing
 functions and defining interfaces.
 Unfortunately, this is very often not true in `R`, and
 especially `[.data.frame`, where every call forces you to
 check the hoops of `row.names`, `drop`, and uniqueness of
-`names`, whether you care or not.
+`names`, whether you care or not. Of course, the 
+priorities of `R` and `C++` differ greatly, but it is an
+important thing to keep in mind when attempting to write
+performant `R` code.
