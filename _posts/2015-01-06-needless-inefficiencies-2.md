@@ -653,7 +653,7 @@ In the end, what we see is that `[.data.frame` is really just
 some calls to `[` (as a primitive dispatching to the internal,
 non-data.frame implementation), `.subset()`, and `.subset2()`.
 You can see such a simplified implementation in
-[`dplyr`](https://github.com/hadley/dplyr/blob/366fa198c46084957f8a756c70263e23ea2a3118/R/tbl-df.r#L114-L146)
+[dplyr](https://github.com/hadley/dplyr/blob/366fa198c46084957f8a756c70263e23ea2a3118/R/tbl-df.r#L114-L146)
 -- note the much more relatively clean
 implementation that arises when the messiness of `drop` and
 `row.names` is avoided!
