@@ -6,7 +6,7 @@ tag:
 
 ## Needless Inefficiencies
 
-Welcome back! [Last post]("{{ site.baseurl }}/2015/01/4/needless-inefficiences-1/"),
+Welcome back! [Last post]({{ site.baseurl }}/2015/01/04/needless-inefficiences-1/),
 I looked at `head.default` and `tail.default`, and gave them
 a little bit of a hard time, but ultimately there's nothing
 seriously wrong with their implementations. Today, we get to
@@ -601,9 +601,9 @@ microbenchmark(
 
 {% highlight text %}
 Unit: microseconds
- expr    min      lq     mean  median      uq     max neval cld
-    R 79.276 82.2850 88.11904 85.7955 89.5635 221.797   100   b
-  Cpp  3.140  3.6555  5.14493  5.4235  5.8050  32.316   100  a 
+ expr    min      lq     mean median      uq     max neval cld
+    R 79.928 82.2910 98.75616 83.734 112.597 304.940   100   b
+  Cpp  2.960  3.6885  6.38308  5.538   5.896  40.451   100  a 
 {% endhighlight %}
 
 Yuck! `R` is really, really slow when it comes to taking
