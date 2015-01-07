@@ -88,7 +88,8 @@ for (inputPath in posts) {
   # Knit away!
   knitr::knit(
     input = inputPath,
-    output = outputPath
+    output = outputPath,
+    envir = new.env()
   )
 
 }
