@@ -46,3 +46,4 @@ bower_components
 # Other ignores
 posts/*.html
 cache/
+hash/

@@ -85,12 +85,30 @@ for (inputPath in posts) {
     paste(fileNameSansExtension, ".md", sep = '')
   )
 
-  # Knit away!
-  knitr::knit(
-    input = inputPath,
-    output = outputPath,
-    envir = new.env()
-  )
+  # Check to see if the .Rmd file has actually changed.
+  # If not, then don't knit it.
+  hashPath <- file.path("hash", fileNameSansExtension)
+  if (file.exists(hashPath))
+  {
+    md5sum <- unname(tools::md5sum(inputPath))
+    hash <- scan(what = character(), file = hashPath)
+    if (identical(hash, c(md5sum)))
+      next
+  }
+
+  # Otherwise, generate a hash for the file and knit
+  else
+  {
+    md5sum <- tools::md5sum(inputPath)
+    cat(md5sum, file = hashPath, sep = "\n")
+
+    # Knit away!
+    knitr::knit(
+      input = inputPath,
+      output = outputPath,
+      envir = new.env()
+    )
+  }
 
 }
 {% endhighlight %}

@@ -614,9 +614,9 @@ microbenchmark(
 
 {% highlight text %}
 Unit: microseconds
- expr    min     lq     mean  median      uq     max neval cld
-    R 80.340 82.495 87.78901 83.8175 90.4315 227.307   100   b
-  Cpp  3.099  3.642  4.82325  4.0325  5.5970  29.331   100  a 
+ expr    min      lq     mean  median      uq     max neval cld
+    R 84.803 87.2020 92.35273 88.6165 90.7545 230.935   100   b
+  Cpp  3.207  3.8255  5.06369  5.0305  5.9485  15.883   100  a 
 {% endhighlight %}
 
 Yuck! `R` is really, really slow when it comes to taking
