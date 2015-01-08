@@ -85,13 +85,13 @@ Consider the (default S3 method) implementations of
 
 
 {% highlight r %}
-print(utils:::head.default)
+​print(utils:::head.default)
 {% endhighlight %}
 
 
 
 {% highlight text %}
-function (x, n = 6L, ...) 
+​function (x, n = 6L, ...) 
 {
     stopifnot(length(n) == 1L)
     n <- if (n < 0L) 
@@ -99,20 +99,21 @@ function (x, n = 6L, ...)
     else min(n, length(x))
     x[seq_len(n)]
 }
-<bytecode: 0x10a02ff40>
+<bytecode: 0x7fa93a1c16e0>
 <environment: namespace:utils>
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-print(utils:::tail.default)
+​print(utils:::tail.default)
 {% endhighlight %}
 
 
 
 {% highlight text %}
-function (x, n = 6L, ...) 
+​function (x, n = 6L, ...) 
 {
     stopifnot(length(n) == 1L)
     xlen <- length(x)
@@ -121,8 +122,9 @@ function (x, n = 6L, ...)
     else min(n, xlen)
     x[seq.int(to = xlen, length.out = n)]
 }
-<bytecode: 0x10c2672a0>
+<bytecode: 0x7fa93b7d9628>
 <environment: namespace:utils>
+
 {% endhighlight %}
 
 Basically, the functions are implemented in terms of
@@ -138,7 +140,7 @@ a little bit of `Rcpp`:
 
 
 {% highlight cpp %}
-#include <Rcpp.h>
+​#include <Rcpp.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -153,7 +155,7 @@ Let's do a little microbenchmark:
 
 
 {% highlight r %}
-x <- rnorm(1E6)
+​x <- rnorm(1E6)
 n <- 5E5
 library("microbenchmark")
 
@@ -163,13 +165,14 @@ identical(head(x, n), head_cpp(x, n))
 
 
 {% highlight text %}
-[1] TRUE
+​[1] TRUE
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-microbenchmark(
+​microbenchmark(
   R = head(x, n),
   cpp = head_cpp(x, n)
 )
@@ -178,10 +181,11 @@ microbenchmark(
 
 
 {% highlight text %}
-Unit: microseconds
- expr      min        lq     mean   median       uq      max neval cld
-    R 2763.865 3372.0005 5404.126 4050.388 5824.236 81276.58   100   b
-  cpp  408.091  944.8155 2535.450 1033.012 2905.449 85697.51   100  a 
+​Unit: microseconds
+ expr      min       lq     mean   median       uq      max neval cld
+    R 2839.869 3818.559 6685.936 4765.720 5483.636 48263.96   100   b
+  cpp  512.757 1034.204 1974.399 1142.649 2214.726 42056.67   100  a 
+
 {% endhighlight %}
 
 This (somewhat overly simplified) implementation has
@@ -192,7 +196,7 @@ size 500 000**. That is, in the base-R implementation of
 
 
 {% highlight r %}
-x[seq_len(n)]
+​x[seq_len(n)]
 {% endhighlight %}
 
 forces an allocation of an integer vector of `1:n` through
@@ -207,7 +211,7 @@ though -- we can call the `length<-` function, e.g.
 
 
 {% highlight r %}
-x <- 1:5
+​x <- 1:5
 length(x) <- 3
 x
 {% endhighlight %}
@@ -215,7 +219,8 @@ x
 
 
 {% highlight text %}
-[1] 1 2 3
+​[1] 1 2 3
+
 {% endhighlight %}
 
 However, if we didn't want to modify `x` in place, we could
@@ -223,7 +228,7 @@ also call
 
 
 {% highlight r %}
-x <- 1:5
+​x <- 1:5
 y <- `length<-`(x, 3)
 x
 {% endhighlight %}
@@ -231,26 +236,28 @@ x
 
 
 {% highlight text %}
-[1] 1 2 3 4 5
+​[1] 1 2 3 4 5
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-y
+​y
 {% endhighlight %}
 
 
 
 {% highlight text %}
-[1] 1 2 3
+​[1] 1 2 3
+
 {% endhighlight %}
 
 Is it actually faster?
 
 
 {% highlight r %}
-x <- rnorm(1E6)
+​x <- rnorm(1E6)
 n <- 5E5
 microbenchmark(
   R = head(x, n),
@@ -262,11 +269,12 @@ microbenchmark(
 
 
 {% highlight text %}
-Unit: microseconds
- expr      min        lq     mean    median       uq        max neval cld
-    R 2714.256 3243.4570 5235.572 4020.3400 5520.814  82311.152   100   b
-  Cpp  352.947  574.6335 2488.921  922.6085 1483.833 113053.041   100  a 
-  len  519.406  972.0270 1614.510 1029.4940 1582.915   4689.548   100  a 
+​Unit: microseconds
+ expr      min       lq     mean   median       uq       max neval cld
+    R 2875.680 3584.733 5239.097 4167.788 5996.915 54580.379   100   b
+  Cpp  517.841 1044.541 1737.889 1123.538 2626.849  9820.792   100  a 
+  len  605.555 1136.015 1689.298 1191.417 1483.251  8907.784   100  a 
+
 {% endhighlight %}
 
 Look at that -- basically on par with our `head_cpp`
@@ -318,7 +326,7 @@ like:
 
 
 {% highlight cpp %}
-#include <Rcpp.h>
+​#include <Rcpp.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -350,7 +358,7 @@ which is then called as, e.g.
 
 
 {% highlight r %}
-head <- function(x, n = 6L)
+​head <- function(x, n = 6L)
   subsequence(x, 1L, n)
 
 tail <- function(x, n = 6L)
@@ -363,31 +371,34 @@ head(x)
 
 
 {% highlight text %}
-[1] 1 2 3 4 5 6
+​[1] 1 2 3 4 5 6
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-tail(x)
+​tail(x)
 {% endhighlight %}
 
 
 
 {% highlight text %}
-[1]  4  5  6  7  8  9 10
+​[1]  4  5  6  7  8  9 10
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-subsequence(x, 5, 8)
+​subsequence(x, 5, 8)
 {% endhighlight %}
 
 
 
 {% highlight text %}
-[1] 5 6 7 8
+​[1] 5 6 7 8
+
 {% endhighlight %}
 
 As per usual -- one could easily implement this in a

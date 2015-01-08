@@ -30,11 +30,7 @@ mainly through the [knitr](http://yihui.name/knitr/) package.
 
 The `R` script that powers this website is fairly simple -- we call 
 `knitr::knit()`, with some knitr hooks + templating set up to support the
-Jekyll-style markdown output:
-
-```{r}
-cat(readLines("make.R"), sep = "\n")
-```
+Jekyll-style markdown output. Check it out [here]({{ site.baseurl }}/make.R)!
 
 and the `Makefile` simply calls `make.R` to make the site. So, when I want to
 write a new article, I can just:

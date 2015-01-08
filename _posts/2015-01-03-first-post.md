@@ -10,13 +10,14 @@ powered blog.
 
 
 {% highlight r %}
-print("Hello, world!")
+​print("Hello, world!")
 {% endhighlight %}
 
 
 
 {% highlight text %}
-[1] "Hello, world!"
+​[1] "Hello, world!"
+
 {% endhighlight %}
 
 Expect to see some more substantial content in the future!
@@ -37,81 +38,7 @@ mainly through the [knitr](http://yihui.name/knitr/) package.
 
 The `R` script that powers this website is fairly simple -- we call 
 `knitr::knit()`, with some knitr hooks + templating set up to support the
-Jekyll-style markdown output:
-
-
-{% highlight r %}
-cat(readLines("make.R"), sep = "\n")
-{% endhighlight %}
-
-
-
-{% highlight text %}
-library(knitr)
-
-# Set some knit options
-knitr::render_jekyll()
-
-knitr::opts_chunk$set(
-  fig.height = 5,
-  fig.width = 7.5,
-  out.extra = '',
-  tidy = FALSE,
-  comment = NA,
-  results = 'markup',
-  cache = TRUE
-)
-
-# Ensure knitr documents are knit with this directory
-# (not 'post/') as the root directory
-knitr::opts_knit$set(root.dir = getwd())
-
-# Ensure the '_posts' directory exists
-if (!file.exists("_posts"))
-  dir.create("_posts")
-
-# Knit all of the .Rmd documents in post
-posts <- list.files("posts", full.names = TRUE)
-
-for (inputPath in posts) {
-
-  # Build the input, output paths
-  fileName <- basename(inputPath)
-  fileNameSansExtension <-
-    tools::file_path_sans_ext(fileName)
-
-  outputPath <- file.path(
-    "_posts",
-    paste(fileNameSansExtension, ".md", sep = '')
-  )
-
-  # Check to see if the .Rmd file has actually changed.
-  # If not, then don't knit it.
-  hashPath <- file.path("hash", fileNameSansExtension)
-  if (file.exists(hashPath))
-  {
-    md5sum <- unname(tools::md5sum(inputPath))
-    hash <- scan(what = character(), file = hashPath)
-    if (identical(hash, c(md5sum)))
-      next
-  }
-
-  # Otherwise, generate a hash for the file and knit
-  else
-  {
-    md5sum <- tools::md5sum(inputPath)
-    cat(md5sum, file = hashPath, sep = "\n")
-
-    # Knit away!
-    knitr::knit(
-      input = inputPath,
-      output = outputPath,
-      envir = new.env()
-    )
-  }
-
-}
-{% endhighlight %}
+Jekyll-style markdown output. Check it out [here]({{ site.baseurl }}/make.R)!
 
 and the `Makefile` simply calls `make.R` to make the site. So, when I want to
 write a new article, I can just:

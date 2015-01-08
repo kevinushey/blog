@@ -40,7 +40,7 @@ that the following two statements can give different results?
 
 
 {% highlight r %}
-df[x, ]
+​df[x, ]
 df[x]
 {% endhighlight %}
 
@@ -53,7 +53,7 @@ Can we use the `missing()` function to help us out here?
 
 
 {% highlight r %}
-f <- function(i, j) cbind(missing(i), missing(j))
+​f <- function(i, j) cbind(missing(i), missing(j))
 rbind(
   f(1),
   f(1,)
@@ -63,9 +63,10 @@ rbind(
 
 
 {% highlight text %}
-      [,1] [,2]
+​      [,1] [,2]
 [1,] FALSE TRUE
 [2,] FALSE TRUE
+
 {% endhighlight %}
 
 Well, that's not helpful -- `R` still believes that the `j`
@@ -77,7 +78,7 @@ out what really happens behind the scenes.
 
 
 {% highlight r %}
-function (x, i, j, drop = if (missing(i)) TRUE else length(cols) == 
+​function (x, i, j, drop = if (missing(i)) TRUE else length(cols) == 
     1) 
 {
     mdrop <- missing(drop)
@@ -95,7 +96,7 @@ is 'dispatches' based on the number of args. Let's see:
     
 
 {% highlight r %}
-f <- function(x, y) nargs()
+​f <- function(x, y) nargs()
 rbind(f(),
       f(1),
       f(1,),
@@ -105,11 +106,12 @@ rbind(f(),
 
 
 {% highlight text %}
-     [,1]
+​     [,1]
 [1,]    0
 [2,]    1
 [3,]    2
 [4,]    2
+
 {% endhighlight %}
 
 In other words, `nargs()` does not include
@@ -130,7 +132,7 @@ the way.
 
 
 {% highlight r %}
-## This check implies the call is of the form `df[i]` or
+​## This check implies the call is of the form `df[i]` or
 ## `df[i, drop = .`, so we want to do some kind of column
 ## subsetting.
 if (Narg < 3L) {
@@ -213,7 +215,7 @@ Let's move on! The next branch focuses on what happens if
 
 
 {% highlight r %}
-## If `i` is missing, e.g. in x[, j]...
+​## If `i` is missing, e.g. in x[, j]...
 if (missing(i)) {
   
   ## For some reason, we provide a shortcut for when:
@@ -301,7 +303,7 @@ gets performed.
 
 
 {% highlight r %}
-## Let's make a copy of 'x' and call it 'xx', because
+​## Let's make a copy of 'x' and call it 'xx', because
 ## we're going to start mutating that object.
 xx <- x
 cols <- names(xx)
@@ -453,7 +455,7 @@ This will be a slightly over simplified implementation that:
 
 
 {% highlight cpp %}
-#include <Rcpp.h>
+​#include <Rcpp.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -542,7 +544,7 @@ Let's see if it works. It should behave identically to
 
 
 {% highlight r %}
-df <- data.frame(
+​df <- data.frame(
   x = 1:5,
   y = letters[1:5],
   z = c(TRUE, FALSE, FALSE, TRUE, FALSE),
@@ -554,31 +556,33 @@ subset_df(df, 1:3, 1:2)
 
 
 {% highlight text %}
-  x y
+​  x y
 1 1 a
 2 2 b
 3 3 c
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-subset_df(df, c(1, 2, 5), c(1, 3))
+​subset_df(df, c(1, 2, 5), c(1, 3))
 {% endhighlight %}
 
 
 
 {% highlight text %}
-  x     z
+​  x     z
 1 1  TRUE
 2 2 FALSE
 3 5 FALSE
+
 {% endhighlight %}
 
 
 
 {% highlight r %}
-all.equal(
+​all.equal(
   subset_df(df, c(1, 2, 5), c(1, 3)),
   df[c(1, 2, 5), c(1, 3), drop = FALSE]
 )
@@ -587,7 +591,8 @@ all.equal(
 
 
 {% highlight text %}
-[1] "Attributes: < Component \"row.names\": Mean relative difference: 0.6666667 >"
+​[1] "Attributes: < Component \"row.names\": Mean relative difference: 0.6666667 >"
+
 {% endhighlight %}
 
 What about performance? Note that I am somewhat intentionally
@@ -597,7 +602,7 @@ how much does it really matter?
 
 
 {% highlight r %}
-library("microbenchmark")
+​library("microbenchmark")
 
 df <- data.frame(
   x = 1:1E2,
@@ -613,10 +618,11 @@ microbenchmark(
 
 
 {% highlight text %}
-Unit: microseconds
- expr    min      lq     mean  median      uq     max neval cld
-    R 84.803 87.2020 92.35273 88.6165 90.7545 230.935   100   b
-  Cpp  3.207  3.8255  5.06369  5.0305  5.9485  15.883   100  a 
+​Unit: microseconds
+ expr    min      lq      mean   median       uq     max neval cld
+    R 85.485 93.7590 117.38056 106.0145 129.9670 285.885   100   b
+  Cpp  3.266  4.3315   6.74168   6.3525   7.9705  15.624   100  a 
+
 {% endhighlight %}
 
 Yuck! `R` is really, really slow when it comes to taking
