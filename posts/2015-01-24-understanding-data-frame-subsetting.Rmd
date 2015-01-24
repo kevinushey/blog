@@ -5,7 +5,7 @@ tags: R
 comments: true
 ---
 
-Welcome back! [Last post]({{ site.baseurl }}/2015/01/04/needless-inefficiences-1/),
+Welcome back! [Last post]({{ site.baseurl }}/2015/01/04/needless-inefficiencies-1/),
 I looked at `head.default` and `tail.default`, and gave them
 a little bit of a hard time, but ultimately there's nothing
 seriously wrong with their implementations. Today, we get to
