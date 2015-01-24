@@ -2,6 +2,7 @@
 layout: post
 title: First Post!
 tags: R
+comments: true
 ---
 
 This is the first post for my `R` + [knitr](http://yihui.name/knitr/) +
@@ -10,7 +11,7 @@ powered blog.
 
 
 {% highlight r %}
-​print("Hello, world!")
+print("Hello, world!")
 {% endhighlight %}
 
 

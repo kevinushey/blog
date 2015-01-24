@@ -1,10 +1,9 @@
 ---
 layout: post
-title: Needless Inefficiences -- [.data.frame is a mess
-tag:
+title: Understanding `[.data.frame`
+tags: R
+comments: true
 ---
-
-## Needless Inefficiencies
 
 Welcome back! [Last post]({{ site.baseurl }}/2015/01/04/needless-inefficiences-1/),
 I looked at `head.default` and `tail.default`, and gave them
@@ -16,10 +15,8 @@ be a bumpy ride.
 The usual preamble: `[.data.frame` is very useful, nice and
 terse, and 'makes sense' once you adopt the `R` mindset.
 Get rows with `df[x, ]`, get column(s?) with `df[, x]`, or
-get columns with just plain old `df[x]` (well, as long as
-your `data.frame` isn't secretly a [`data.table`](http://cran.r-project.org/web/packages/data.table/index.html),
-which supplies `[.data.table` as an incredibly powerful and
-yet equally weird function.)
+get columns with just plain old `df[x]`. Seems intuitive,
+on the face of it.
 
 Intuitively, `[.data.frame` seems like it shouldn't be too
 hard to implement. For the numeric types, we're trying to
@@ -40,20 +37,21 @@ that the following two statements can give different results?
 
 
 {% highlight r %}
-​df[x, ]
+df[x, ]
 df[x]
 {% endhighlight %}
 
 In the first case, we are **explicitly** setting the `j` argument
 to be missing; in the second case, it is **implicitly** missing.
 It seems surprising, but `[.data.frame` does an ad-hoc dispatch
-based on the number of implicitly missing arguments!
+based on the number of implicitly missing arguments. How does it
+do that?
 
 Can we use the `missing()` function to help us out here?
 
 
 {% highlight r %}
-​f <- function(i, j) cbind(missing(i), missing(j))
+f <- function(i, j) cbind(missing(i), missing(j))
 rbind(
   f(1),
   f(1,)
@@ -78,7 +76,7 @@ out what really happens behind the scenes.
 
 
 {% highlight r %}
-​function (x, i, j, drop = if (missing(i)) TRUE else length(cols) == 
+function (x, i, j, drop = if (missing(i)) TRUE else length(cols) == 
     1) 
 {
     mdrop <- missing(drop)
@@ -96,7 +94,7 @@ is 'dispatches' based on the number of args. Let's see:
     
 
 {% highlight r %}
-​f <- function(x, y) nargs()
+f <- function(x, y) nargs()
 rbind(f(),
       f(1),
       f(1,),
@@ -126,13 +124,89 @@ Okay, so we understand how `[.data.frame` can discriminate
 between `df[i]` and `df[i, ]`, because `nargs()` gives us
 a funny way to poke at that. Now, let's look at the first
 branch, where `Nargs < 3` -- implying a `df[i]` call. 
+
+From here on, we're going to start walking line-by-line
+through the code in `[.data.frame`. Just for posterity,
+this is the version of `R` I'm running -- it's possible
+that `[.data.frame` might look slightly different on your
+computer:
+
+
+{% highlight r %}
+devtools::session_info()
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​Session info--------------------------------------------------------------
+
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​ setting  value                       
+ version  R version 3.1.2 (2014-10-31)
+ system   x86_64, darwin13.4.0        
+ ui       X11                         
+ language (EN)                        
+ collate  en_CA.UTF-8                 
+ tz       America/Vancouver           
+
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​Packages------------------------------------------------------------------
+
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​ package        * version    date       source        
+ BiocInstaller  * 1.14.3     2014-10-14 Bioconductor  
+ codetools        0.2.9      2014-08-21 CRAN (R 3.1.2)
+ colorspace       1.2.4      2013-09-30 CRAN (R 3.1.0)
+ crayon           1.1.0      2014-10-15 CRAN (R 3.1.2)
+ devtools       * 1.6.1      2014-10-07 CRAN (R 3.1.1)
+ digest           0.6.4      2013-12-03 CRAN (R 3.1.0)
+ evaluate         0.5.5      2014-04-29 CRAN (R 3.1.0)
+ formatR          1.0        2014-08-25 CRAN (R 3.1.1)
+ ggplot2          1.0.0      2014-05-21 CRAN (R 3.1.0)
+ gtable           0.1.2      2012-12-05 CRAN (R 3.1.0)
+ knitr          * 1.8        2014-11-11 CRAN (R 3.1.2)
+ lattice          0.20.29    2014-04-04 CRAN (R 3.1.2)
+ MASS             7.3.35     2014-09-30 CRAN (R 3.1.2)
+ microbenchmark * 1.4.2      2014-09-28 CRAN (R 3.1.1)
+ multcomp         1.3.7      2014-10-02 CRAN (R 3.1.1)
+ munsell          0.4.2      2013-07-11 CRAN (R 3.1.0)
+ mvtnorm          1.0.1      2014-11-13 CRAN (R 3.1.2)
+ plyr             1.8.1      2014-02-26 CRAN (R 3.1.0)
+ proto            0.3.10     2012-12-22 CRAN (R 3.1.0)
+ Rcpp             0.11.3     2014-09-29 CRAN (R 3.1.1)
+ RCurl            1.95.4.3   2014-07-29 CRAN (R 3.1.1)
+ reshape2         1.4        2014-04-23 CRAN (R 3.1.0)
+ rstudioapi       0.1        2014-03-27 CRAN (R 3.1.0)
+ sandwich         2.3.2      2014-08-24 CRAN (R 3.1.1)
+ scales           0.2.4      2014-04-22 CRAN (R 3.1.0)
+ stringr          0.6.2      2014-03-23 local         
+ survival         2.37.7     2014-01-22 CRAN (R 3.1.2)
+ testthat       * 0.9.1.9001 2015-01-19 local         
+ TH.data          1.0.4      2014-11-10 CRAN (R 3.1.2)
+ zoo              1.7.11     2014-02-27 CRAN (R 3.1.0)
+
+{% endhighlight %}
+
 I'll write my own comments above the code used for
 `[.data.frame`, explaining what's going on each step of
 the way.
 
 
 {% highlight r %}
-​## This check implies the call is of the form `df[i]` or
+## This check implies the call is of the form `df[i]` or
 ## `df[i, drop = .`, so we want to do some kind of column
 ## subsetting.
 if (Narg < 3L) {
@@ -171,7 +245,9 @@ if (Narg < 3L) {
     ## effectively amounts to calling `as.list(x)[i]`, but
     ## this gets done in internal C code (there is no 
     ## `[.list` S3 method registered). This is the joy of
-    ## 'internal generics'!
+    ## 'internal generics'! The intention of this code
+    ## is likely to avoid having to actually call
+    ## `as.list(x)`, which could force a deep copy.
     y <- NextMethod("[")
     
     ## Get and validate the names
@@ -208,14 +284,15 @@ seems sane. There is a bit of code duplication and weirdness
 through calling `NextMethod("[")`, but it remains
 functional and understandable. Although terribly opaque,
 `NextMethod("[")` is the only way to get at that subsetting
-primitive past `[.data.frame` (as `[.list` does not exist).
+primitive past `[.data.frame` (as `[.list` does not exist),
+since `list` is not really an S3 class, just a `SEXP` type.
 
 Let's move on! The next branch focuses on what happens if
 `i`, our row subetting bit, is missing:
 
 
 {% highlight r %}
-​## If `i` is missing, e.g. in x[, j]...
+## If `i` is missing, e.g. in x[, j]...
 if (missing(i)) {
   
   ## For some reason, we provide a shortcut for when:
@@ -226,7 +303,7 @@ if (missing(i)) {
   ##
   ## This amounts to being a funky way of extracting the
   ## first column from a single column data.frame, but it
-  ## seems odd to specialze for that case ...
+  ## seems odd to specialize for that case ...
   if (drop && !has.j && length(x) == 1L) 
       return(.subset2(x, 1L))
   
@@ -303,8 +380,11 @@ gets performed.
 
 
 {% highlight r %}
-​## Let's make a copy of 'x' and call it 'xx', because
-## we're going to start mutating that object.
+## Let's make a 'copy' of 'x' and call it 'xx', because
+## we're going to start mutating that object. Note that
+## this should be a shallow copy (ie, we are just placing
+## a new reference to the data structure pointed to by `x`,
+## called `xx`)
 xx <- x
 cols <- names(xx)
 
@@ -431,13 +511,21 @@ a hope of understanding of what's going on).
 
 What about performance? Surprisingly, there is nothing really
 egregiously bad -- the main culprit is the use of temporaries,
-alongside many calls to `[`. However, given that this is
+alongside many calls to `[`. Instead, there is just a lot
+of awkward error handling, alongside some somewhat questionable
+methodology for performing the subsetting.
+However, given that this is
 implemented as a primitive (and `R` has gotten better about
 performing shallow copies when appropriate) there aren't
-too many needless allocations.
+too many needless allocations. And, it's fairly easy to imagine
+this having evolved over `R`'s lifetime to something that was
+once cute and tidy to something that has had to handle all
+version of `data.frame` as it evolved, so let's not be too
+harsh.
 
 That said, there's nothing stopping us from implementing
-the same functionality in `Rcpp`. Of course, having the same
+the same functionality in a much more sane manner, so let's
+try doing this ourselves in `Rcpp`. Of course, having the same
 amount of flexibility will be tough, but let's see what
 we get specifically for an integer-integer subsetting case.
 One could imagine implementing similar functionality for
@@ -455,7 +543,7 @@ This will be a slightly over simplified implementation that:
 
 
 {% highlight cpp %}
-​#include <Rcpp.h>
+#include <Rcpp.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -500,7 +588,9 @@ SEXP subset_df(SEXP x,
     {
       // Copying vectors is a pain in the butt, because we
       // need to know the actual type underneath the SEXP.
-      // I'll just handle a couple of the main types.
+      // I'll just handle a couple of the main types. One
+      // could imagine simplifying this with some macro
+      // magic...
       switch (TYPEOF(vec))
       {
       case REALSXP:
@@ -544,7 +634,7 @@ Let's see if it works. It should behave identically to
 
 
 {% highlight r %}
-​df <- data.frame(
+df <- data.frame(
   x = 1:5,
   y = letters[1:5],
   z = c(TRUE, FALSE, FALSE, TRUE, FALSE),
@@ -566,7 +656,7 @@ subset_df(df, 1:3, 1:2)
 
 
 {% highlight r %}
-​subset_df(df, c(1, 2, 5), c(1, 3))
+subset_df(df, c(1, 2, 5), c(1, 3))
 {% endhighlight %}
 
 
@@ -582,7 +672,7 @@ subset_df(df, 1:3, 1:2)
 
 
 {% highlight r %}
-​all.equal(
+all.equal(
   subset_df(df, c(1, 2, 5), c(1, 3)),
   df[c(1, 2, 5), c(1, 3), drop = FALSE]
 )
@@ -602,7 +692,7 @@ how much does it really matter?
 
 
 {% highlight r %}
-​library("microbenchmark")
+library("microbenchmark")
 
 df <- data.frame(
   x = 1:1E2,
@@ -619,9 +709,9 @@ microbenchmark(
 
 {% highlight text %}
 ​Unit: microseconds
- expr    min      lq      mean   median       uq     max neval cld
-    R 85.485 93.7590 117.38056 106.0145 129.9670 285.885   100   b
-  Cpp  3.266  4.3315   6.74168   6.3525   7.9705  15.624   100  a 
+ expr    min     lq     mean  median      uq     max neval cld
+    R 80.728 83.742 89.19671 85.5575 92.3520 203.344   100   b
+  Cpp  3.059  3.827  5.13581  5.4120  5.7125  27.658   100  a 
 
 {% endhighlight %}
 
@@ -636,8 +726,8 @@ as well as checking and handling of duplicate names.
 
 However, we get these huge gains because:
 
-1. We avoid allocating a bunch of temporary, unneeded
-   objects at the `R` level,
+1. We avoid allocating a bunch of (small, but temporary
+   and unneeded) objects at the `R` level,
 
 2. We avoid the excessive branching associated with the
    `drop` argument,
@@ -653,7 +743,8 @@ is pretty unreadable. You can [read the code online](https://github.com/wch/r-so
 which even comes with some (albeit bare) comments. It seems
 unfortunate that `R` strips comments out of code included in
 `base` (and other packages), since they would be enormously
-useful for understanding what's going on.
+useful for understanding what's going on. (Not the mention
+the rather surprising formatting style...)
 
 In the end, what we see is that `[.data.frame` is really just
 some calls to `[` (as a primitive dispatching to the internal,
@@ -664,12 +755,16 @@ You can see such a simplified implementation in
 implementation that arises when the messiness of `drop` and
 `row.names` is avoided!
 
-One of the guiding tenants of `C++` is:
+For some finishing remarks -- one of the guiding tenants of
+`C++` is:
 
 > You don't pay for what you don't use.
 
 and this is a very nice thing to keep in mind when implementing
-functions and defining interfaces.
+functions and defining interfaces. It's useful to contrain
+interfaces when possible, as it allows you to design your
+data structures in such a way that the unnecessary cruft only
+exists when it is actually needed.
 Unfortunately, this is very often not true in `R`, and
 especially `[.data.frame`, where every call forces you to
 check the hoops of `row.names`, `drop`, and uniqueness of

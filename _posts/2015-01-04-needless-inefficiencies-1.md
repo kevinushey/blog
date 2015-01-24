@@ -2,6 +2,7 @@
 layout: post
 title: Needless Inefficiencies in R -- Head and Tail
 tags: R
+comments: true
 ---
 
 
@@ -85,7 +86,7 @@ Consider the (default S3 method) implementations of
 
 
 {% highlight r %}
-​print(utils:::head.default)
+print(utils:::head.default)
 {% endhighlight %}
 
 
@@ -99,7 +100,7 @@ Consider the (default S3 method) implementations of
     else min(n, length(x))
     x[seq_len(n)]
 }
-<bytecode: 0x7fa93a1c16e0>
+<bytecode: 0x7f9d39db7bf8>
 <environment: namespace:utils>
 
 {% endhighlight %}
@@ -107,7 +108,7 @@ Consider the (default S3 method) implementations of
 
 
 {% highlight r %}
-​print(utils:::tail.default)
+print(utils:::tail.default)
 {% endhighlight %}
 
 
@@ -122,7 +123,7 @@ Consider the (default S3 method) implementations of
     else min(n, xlen)
     x[seq.int(to = xlen, length.out = n)]
 }
-<bytecode: 0x7fa93b7d9628>
+<bytecode: 0x7f9d3da61920>
 <environment: namespace:utils>
 
 {% endhighlight %}
@@ -140,7 +141,7 @@ a little bit of `Rcpp`:
 
 
 {% highlight cpp %}
-​#include <Rcpp.h>
+#include <Rcpp.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -155,7 +156,7 @@ Let's do a little microbenchmark:
 
 
 {% highlight r %}
-​x <- rnorm(1E6)
+x <- rnorm(1E6)
 n <- 5E5
 library("microbenchmark")
 
@@ -172,7 +173,7 @@ identical(head(x, n), head_cpp(x, n))
 
 
 {% highlight r %}
-​microbenchmark(
+microbenchmark(
   R = head(x, n),
   cpp = head_cpp(x, n)
 )
@@ -182,9 +183,9 @@ identical(head(x, n), head_cpp(x, n))
 
 {% highlight text %}
 ​Unit: microseconds
- expr      min       lq     mean   median       uq      max neval cld
-    R 2839.869 3818.559 6685.936 4765.720 5483.636 48263.96   100   b
-  cpp  512.757 1034.204 1974.399 1142.649 2214.726 42056.67   100  a 
+ expr      min        lq     mean   median       uq      max neval cld
+    R 2616.273 3821.7180 5488.897 4353.585 4879.061 42492.43   100   b
+  cpp  464.490  813.7025 2250.506 1011.253 2384.738 40937.20   100  a 
 
 {% endhighlight %}
 
@@ -196,7 +197,7 @@ size 500 000**. That is, in the base-R implementation of
 
 
 {% highlight r %}
-​x[seq_len(n)]
+x[seq_len(n)]
 {% endhighlight %}
 
 forces an allocation of an integer vector of `1:n` through
@@ -211,7 +212,7 @@ though -- we can call the `length<-` function, e.g.
 
 
 {% highlight r %}
-​x <- 1:5
+x <- 1:5
 length(x) <- 3
 x
 {% endhighlight %}
@@ -228,7 +229,7 @@ also call
 
 
 {% highlight r %}
-​x <- 1:5
+x <- 1:5
 y <- `length<-`(x, 3)
 x
 {% endhighlight %}
@@ -243,7 +244,7 @@ x
 
 
 {% highlight r %}
-​y
+y
 {% endhighlight %}
 
 
@@ -257,7 +258,7 @@ Is it actually faster?
 
 
 {% highlight r %}
-​x <- rnorm(1E6)
+x <- rnorm(1E6)
 n <- 5E5
 microbenchmark(
   R = head(x, n),
@@ -270,10 +271,10 @@ microbenchmark(
 
 {% highlight text %}
 ​Unit: microseconds
- expr      min       lq     mean   median       uq       max neval cld
-    R 2875.680 3584.733 5239.097 4167.788 5996.915 54580.379   100   b
-  Cpp  517.841 1044.541 1737.889 1123.538 2626.849  9820.792   100  a 
-  len  605.555 1136.015 1689.298 1191.417 1483.251  8907.784   100  a 
+ expr      min        lq    mean   median       uq       max neval cld
+    R 2670.088 3299.1995 4413.11 4270.028 5493.553  7492.546   100   b
+  Cpp  398.881  867.8545 2240.11  946.649 1219.981 47385.696   100  a 
+  len  531.011  965.9580 1358.55 1018.165 1139.345  4784.180   100  a 
 
 {% endhighlight %}
 
@@ -326,7 +327,7 @@ like:
 
 
 {% highlight cpp %}
-​#include <Rcpp.h>
+#include <Rcpp.h>
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -358,7 +359,7 @@ which is then called as, e.g.
 
 
 {% highlight r %}
-​head <- function(x, n = 6L)
+head <- function(x, n = 6L)
   subsequence(x, 1L, n)
 
 tail <- function(x, n = 6L)
@@ -378,7 +379,7 @@ head(x)
 
 
 {% highlight r %}
-​tail(x)
+tail(x)
 {% endhighlight %}
 
 
@@ -391,7 +392,7 @@ head(x)
 
 
 {% highlight r %}
-​subsequence(x, 5, 8)
+subsequence(x, 5, 8)
 {% endhighlight %}
 
 
