@@ -3,8 +3,13 @@ layout: default
 ---
 
 <div class="post">
-  <h1 class="post-title">{{ page.title }}</h1>
-  <span class="post-date">{{ page.date | date_to_string }}</span>
+  <a style="text-decoration: none;" href="{{ site.baseurl }}{{ post.url }}">
+    <h1 class="post-title">{{ page.title }}</h1>
+  </a>
+  <span class="post-date">
+    Posted on <a href="{{ site.baseurl }}{{ post.url }}">{{ page.date | date: "%B %-d, %Y" }}</a>.
+  </span>
+  <hr class="post-separator">
   {{ content }}
 </div>
 

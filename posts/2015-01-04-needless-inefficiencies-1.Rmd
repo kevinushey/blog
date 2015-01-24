@@ -231,7 +231,9 @@ like:
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector subsequence(NumericVector x, int start, int end) {
+NumericVector subsequence(NumericVector x,
+                          int start,
+                          int end) {
   
   if (start > end)
     return NumericVector();

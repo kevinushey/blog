@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Understanding `[.data.frame`
+title: Understanding [.data.frame
 tags: R
 comments: true
 ---
@@ -53,8 +53,8 @@ Can we use the `missing()` function to help us out here?
 {% highlight r %}
 f <- function(i, j) cbind(missing(i), missing(j))
 rbind(
-  f(1),
-  f(1,)
+  f(1), ## implicitly missing
+  f(1,) ## explicitly missing
 )
 {% endhighlight %}
 
@@ -68,7 +68,7 @@ rbind(
 {% endhighlight %}
 
 Well, that's not helpful -- `R` still believes that the `j`
-argument is missing (which it is). But how do we differentiate
+argument is missing in each case (which it is). But how do we differentiate
 between this notion of **implicit** and **explicit** missingness?
 
 Let's look at the first few lines of `[.data.frame` to find
@@ -95,10 +95,10 @@ is 'dispatches' based on the number of args. Let's see:
 
 {% highlight r %}
 f <- function(x, y) nargs()
-rbind(f(),
-      f(1),
-      f(1,),
-      f(,))
+rbind(f(),     ## nothing passed
+      f(1),    ## single argument
+      f(1,),   ## argument + explicit missing
+      f(,))    ## both explicit missing
 {% endhighlight %}
 
 
@@ -131,74 +131,16 @@ this is the version of `R` I'm running -- it's possible
 that `[.data.frame` might look slightly different on your
 computer:
 
-
-{% highlight r %}
-devtools::session_info()
-{% endhighlight %}
-
-
-
-{% highlight text %}
-​Session info--------------------------------------------------------------
-
-{% endhighlight %}
-
-
-
-{% highlight text %}
-​ setting  value                       
- version  R version 3.1.2 (2014-10-31)
- system   x86_64, darwin13.4.0        
- ui       X11                         
- language (EN)                        
- collate  en_CA.UTF-8                 
- tz       America/Vancouver           
-
-{% endhighlight %}
-
-
-
-{% highlight text %}
-​Packages------------------------------------------------------------------
-
-{% endhighlight %}
-
-
-
-{% highlight text %}
-​ package        * version    date       source        
- BiocInstaller  * 1.14.3     2014-10-14 Bioconductor  
- codetools        0.2.9      2014-08-21 CRAN (R 3.1.2)
- colorspace       1.2.4      2013-09-30 CRAN (R 3.1.0)
- crayon           1.1.0      2014-10-15 CRAN (R 3.1.2)
- devtools       * 1.6.1      2014-10-07 CRAN (R 3.1.1)
- digest           0.6.4      2013-12-03 CRAN (R 3.1.0)
- evaluate         0.5.5      2014-04-29 CRAN (R 3.1.0)
- formatR          1.0        2014-08-25 CRAN (R 3.1.1)
- ggplot2          1.0.0      2014-05-21 CRAN (R 3.1.0)
- gtable           0.1.2      2012-12-05 CRAN (R 3.1.0)
- knitr          * 1.8        2014-11-11 CRAN (R 3.1.2)
- lattice          0.20.29    2014-04-04 CRAN (R 3.1.2)
- MASS             7.3.35     2014-09-30 CRAN (R 3.1.2)
- microbenchmark * 1.4.2      2014-09-28 CRAN (R 3.1.1)
- multcomp         1.3.7      2014-10-02 CRAN (R 3.1.1)
- munsell          0.4.2      2013-07-11 CRAN (R 3.1.0)
- mvtnorm          1.0.1      2014-11-13 CRAN (R 3.1.2)
- plyr             1.8.1      2014-02-26 CRAN (R 3.1.0)
- proto            0.3.10     2012-12-22 CRAN (R 3.1.0)
- Rcpp             0.11.3     2014-09-29 CRAN (R 3.1.1)
- RCurl            1.95.4.3   2014-07-29 CRAN (R 3.1.1)
- reshape2         1.4        2014-04-23 CRAN (R 3.1.0)
- rstudioapi       0.1        2014-03-27 CRAN (R 3.1.0)
- sandwich         2.3.2      2014-08-24 CRAN (R 3.1.1)
- scales           0.2.4      2014-04-22 CRAN (R 3.1.0)
- stringr          0.6.2      2014-03-23 local         
- survival         2.37.7     2014-01-22 CRAN (R 3.1.2)
- testthat       * 0.9.1.9001 2015-01-19 local         
- TH.data          1.0.4      2014-11-10 CRAN (R 3.1.2)
- zoo              1.7.11     2014-02-27 CRAN (R 3.1.0)
-
-{% endhighlight %}
+    Session info
+    ------------
+      
+    setting  value                       
+    version  R version 3.1.2 (2014-10-31)
+    system   x86_64, darwin13.4.0        
+    ui       RStudio (0.98.1091)         
+    language (EN)                        
+    collate  en_CA.UTF-8                 
+    tz       America/Vancouver           
 
 I'll write my own comments above the code used for
 `[.data.frame`, explaining what's going on each step of
@@ -206,48 +148,57 @@ the way.
 
 
 {% highlight r %}
-## This check implies the call is of the form `df[i]` or
-## `df[i, drop = .`, so we want to do some kind of column
-## subsetting.
+## This check implies the call is of the form
+## `df[i]` or `df[i, drop = .`, so we want to do
+## some kind of column subsetting.
 if (Narg < 3L) {
   
-  ## Ignore 'drop' -- when doing single-element subsetting,
-  ## we always return a data.frame
+  ## Ignore 'drop' -- when doing single-element
+  ## subsetting, we always return a data.frame
   if (!mdrop) 
     warning("'drop' argument will be ignored")
   
-  ## If there was no `i` argument, implying a call like
-  ## `df[]`, just return `df`.
+  ## If there was no `i` argument, implying a call
+  ## like `df[]`, just return `df`.
   if (missing(i)) 
     return(x)
   
-  ## If `i` is a matrix, convert `x` to a matrix (!?) and then
-  ## subset that matrix with `i`. I still do not understand
-  ## matrix subsetting of data.frames (or matrix subsetting
-  ## of matrices, for that matter...)
+  ## If `i` is a matrix, convert `x` to a matrix
+  ## (!?) and then subset that matrix with `i`. I
+  ## still do not understand matrix subsetting of
+  ## data.frames (or matrix subsetting of
+  ## matrices, for that matter...)
   if (is.matrix(i)) 
     return(as.matrix(x)[i])
   
-  ## Get the names, and ensure it's a character vector
+  ## Get the names, and ensure it's a character
+  ## vector
   nm <- names(x)
   if (is.null(nm)) 
     nm <- character()
   
-  ## If i is not a character (ie, numeric or logical
-  ## subsetting...), AND one (or more) of the names is NA...
+  ## If i is not a character (ie, numeric or
+  ## logical subsetting...), AND one (or more) of
+  ## the names is NA...
   if (!is.character(i) && anyNA(nm)) {
     
     ## Replace the names with indices (1 to ncol(x))
     names(nm) <- names(x) <- seq_along(x)
     
-    ## Call the next method after `[.data.frame`. In this
-    ## case, that implies calling an internal generic; this
-    ## effectively amounts to calling `as.list(x)[i]`, but
-    ## this gets done in internal C code (there is no 
-    ## `[.list` S3 method registered). This is the joy of
-    ## 'internal generics'! The intention of this code
-    ## is likely to avoid having to actually call
-    ## `as.list(x)`, which could force a deep copy.
+    ## Call the next method after `[.data.frame`. In
+    ## this case, that implies calling an internal
+    ## generic; this effectively amounts to calling
+    ## `as.list(x)[i]`, but this gets done in internal
+    ## C code (there is no `[.list` S3 method
+    ## registered). This is the joy of 'internal
+    ## generics'! The intention of this code is likely
+    ## to avoid having to actually call `as.list(x)`,
+    ## which could force a deep copy.
+    ## 
+    ## NB: As Hadley pointed out, this could simply
+    ## have been `.subset2()`, which would have been
+    ## more readable (and, in fact, is used in other
+    ## parts of this function anyway!)
     y <- NextMethod("[")
     
     ## Get and validate the names
@@ -258,9 +209,9 @@ if (Narg < 3L) {
   }
   else {
     
-    ## Effectively the same as above, expect with marginally
-    ## different error checks. Seems like this could have
-    ## been consolidated...
+    ## Effectively the same as above, expect with
+    ## marginally different error checks. Seems like
+    ## this could have been consolidated...
     y <- NextMethod("[")
     cols <- names(y)
     if (!is.null(cols) && anyNA(cols)) 
@@ -271,7 +222,7 @@ if (Narg < 3L) {
   if (anyDuplicated(cols)) 
     names(y) <- make.unique(cols)
   
-  ## Set 'automatic', 'compressed' row names, and the
+  ## Set 'automatic', 'compressed' row names, and the 
   ## class for our return.
   attr(y, "row.names") <- .row_names_info(x, 0L)
   attr(y, "class") <- oldClass(x)
@@ -301,9 +252,9 @@ if (missing(i)) {
   ##   2. j is missing, and
   ##   3. x is a one-column data.frame.
   ##
-  ## This amounts to being a funky way of extracting the
-  ## first column from a single column data.frame, but it
-  ## seems odd to specialize for that case ...
+  ## This amounts to being a funky way of extracting
+  ## the first column from a single column data.frame,
+  ## but it seems odd to specialize for that case ...
   if (drop && !has.j && length(x) == 1L) 
       return(.subset2(x, 1L))
   
@@ -312,9 +263,9 @@ if (missing(i)) {
   if (is.null(nm)) 
       nm <- character()
   
-  ## Do some more weirdness, similar to before, where we
-  ## inline some awkward error handling over what is really
-  ## just a call to `.subset(x, j)`.
+  ## Do some more weirdness, similar to before, where
+  ## we inline some awkward error handling over what is
+  ## really just a call to `.subset(x, j)`.
   if (has.j && !is.character(j) && anyNA(nm)) {
       names(nm) <- names(x) <- seq_along(x)
       y <- .subset(x, j)
@@ -332,7 +283,7 @@ if (missing(i)) {
           stop("undefined columns selected")
   }
   
-  ## If, after subsetting, we have a single-column
+  ## If, after subsetting, we have a single-column 
   ## data.frame then do another awkward early return.
   if (drop && length(y) == 1L) 
       return(.subset2(y, 1L))
@@ -341,10 +292,10 @@ if (missing(i)) {
   if (anyDuplicated(cols)) 
       names(y) <- make.unique(cols)
   
-  ## Get the number of rows. Wait, why are we using
-  ## .row_names_info instead of just plain `nrow`? If you
-  ## look at how `nrow()` works for a `data.frame`, you'll
-  ## see...
+  ## Get the number of rows. Wait, why are we using 
+  ## .row_names_info instead of just plain `nrow`? If
+  ## you look at how `nrow()` works for a `data.frame`,
+  ## you'll see...
   ##
   ##    nrow() 
   ##        -> dim() 
@@ -354,9 +305,9 @@ if (missing(i)) {
   ## so it is just a shortcut to that dispatch.
   nrow <- .row_names_info(x, 2L)
   
-  ## For one-row data.frames, if drop is TRUE, try to
-  ## return the row as a vector, letting structure handle
-  ## coercion. Yuck!
+  ## For one-row data.frames, if drop is TRUE, try to 
+  ## return the row as a vector, letting structure
+  ## handle coercion. Yuck!
   if (drop && !mdrop && nrow == 1L) 
       return(structure(y, class = NULL, row.names = NULL))
   
@@ -382,21 +333,22 @@ gets performed.
 {% highlight r %}
 ## Let's make a 'copy' of 'x' and call it 'xx', because
 ## we're going to start mutating that object. Note that
-## this should be a shallow copy (ie, we are just placing
-## a new reference to the data structure pointed to by `x`,
-## called `xx`)
+## this should be a shallow copy (ie, we are just
+## placing a new reference to the data structure
+## pointed to by `x`, called `xx`)
 xx <- x
 cols <- names(xx)
 
-## Replace x with a list of length x, containing the
-## same attributes of `xx`. Really, this copies _all_
+## Replace x with a list of length x, containing the 
+## same attributes of `xx`. Really, this copies _all_ 
 ## attributes from `xx` to `x`.
 x <- vector("list", length(x))
 x <- .Internal(copyDFattr(xx, x))
 
-## And then, now that we've copied all of the attributes,
-## let's go ahead and clear out the data.frame specific
-## ones, because ... I guess we need to refresh them later?
+## And then, now that we've copied all of the
+## attributes, let's go ahead and clear out the
+## data.frame specific ones, because ... I guess we
+## need to refresh them later?
 oldClass(x) <- attr(x, "row.names") <- NULL
 
 ## If `j` was specified (ie, this is `df[i, j]`)...
@@ -412,62 +364,65 @@ if (has.j) {
     names(nm) <- names(x) <- seq_along(x)
   
   ## Oh! Now you know! We removed the class from `x` so
-  ## that we could use `[`, and get back at that `[.list`
-  ## primitive hiding in the C sources. So this is where
-  ## we do column subsetting. This is still weird as heck
-  ## though, since we're subsetting an _empty list_; ie,
-  ## list whose elements are just NULL. I guess this is
-  ## a way of getting the names of x in an appropriate order?
+  ## that we could use `[`, and get back at that
+  ## `[.list` primitive hiding in the C sources. So
+  ## this is where we do column subsetting. This is
+  ## still weird as heck though, since we're subsetting
+  ## an _empty list_; ie, list whose elements are just
+  ## NULL. I guess this is a way of getting the names
+  ## of x in an appropriate order?
   x <- x[j]
   
   ## Some more unreadable nonsense handling the special
-  ## case of drop being true, and `x` being a length
+  ## case of drop being true, and `x` being a length 
   ## one vector.
   cols <- names(x)
   if (drop && length(x) == 1L) {
     
-    ## Note that, within this branch, we no longer care what
-    ## `x` is. So we just used that as some weird proxy
-    ## subsetting object; now we go back to `xx` (which
-    ## is the orginal `x` -- remmber how we copied it?
-    ## Why on earth is this code so convoluted?)
+    ## Note that, within this branch, we no longer care
+    ## what `x` is. So we just used that as some weird
+    ## proxy subsetting object; now we go back to `xx`
+    ## (which is the orginal `x` -- remmber how we
+    ## copied it? Why on earth is this code so
+    ## convoluted?)
     if (is.character(i)) {
       rows <- attr(xx, "row.names")
       i <- pmatch(i, rows, duplicates.ok = TRUE)
     }
     xj <- .subset2(.subset(xx, j), 1L)
-    return(if (length(dim(xj)) != 2L) xj[i] else xj[i, 
-                                                    , drop = FALSE])
+    return(if (length(dim(xj)) != 2L) xj[i]
+           else xj[i, , drop = FALSE])
   }
   
-  ## More error checking + 'fixing up' of names and such.
+  ## More error checking + 'fixing up' of names and
+  ## such.
   if (anyNA(cols)) 
     stop("undefined columns selected")
   if (!is.null(names(nm))) 
     cols <- names(x) <- nm[cols]
   
-  ## Get some index vectors, so that we can handle the
+  ## Get some index vectors, so that we can handle the 
   ## column re-organizing / subsetting later.
   nxx <- structure(seq_along(xx), names = names(xx))
   
-  ## This vector governs the column indices, which we
-  ## will see are used later when copying from `xx`
+  ## This vector governs the column indices, which we 
+  ## will see are used later when copying from `xx` 
   ## back into `x`.
   sxx <- match(nxx[j], seq_along(xx))
 }
 
-## When `j` is not supplied, this implies we want all
-## columns without re-ordering -- so just take the indices
-## from 1 to length(x).
+## When `j` is not supplied, this implies we want all 
+## columns without re-ordering -- so just take the
+## indices from 1 to length(x).
 else sxx <- seq_along(x)
 
 ## Okay, now let's look at row subsetting.
 rows <- NULL
 
-## If `i` is a character vector, figure out the indices by
-## matching `i` to the row.names of `xx`. (Not `x` --
-## remember, we decided to turn that into a `list` to get
-## at the `[` primitive)
+## If `i` is a character vector, figure out the indices
+## by matching `i` to the row.names of `xx`. (Not `x`
+## -- remember, we decided to turn that into a `list`
+## to get at the `[` primitive)
 if (is.character(i)) {
   
   ## Directly access the attribute, to avoid dispatch /
@@ -479,24 +434,26 @@ if (is.character(i)) {
 ## For each vector in `x`, our empty list...
 for (j in seq_along(x)) {
   
-  ## Figure out the vector in `xx` that we want to put at
-  ## the `j`th column.
+  ## Figure out the vector in `xx` that we want to put
+  ## at the `j`th column.
   xj <- xx[[sxx[j]]]
   
-  ## If xj is not a 2D object (e.g. a matrix), then just
-  ## mash it into x[[j]] (subsetting with `i` -- there's
-  ## the row subsetting kicking in!) Also, implicitly
-  ## respect the `drop` attribute here.
-  ##
-  ## Note that we're now populating `x`, our 'output'
-  ## data.frame, with elements of `xx`. So very roundabout!
+  ## If xj is not a 2D object (e.g. a matrix), then
+  ## just mash it into x[[j]] (subsetting with `i` --
+  ## there's the row subsetting kicking in!) Also,
+  ## implicitly respect the `drop` attribute here.
+  ## 
+  ## Note that we're now populating `x`, our 'output' 
+  ## data.frame, with elements of `xx`. So very
+  ## roundabout!
   if (length(dim(xj)) != 2L)
     x[[j]] <- xj[i]
   
   ## Otherwise, call the same function, but with `drop`
-  ## explicitly as FALSE (ignoring if it was set TRUE
-  ## earlier). This way, we can stuff matrices (or other
-  ## data.frames!) in without dropping attributes.
+  ## explicitly as FALSE (ignoring if it was set TRUE 
+  ## earlier). This way, we can stuff matrices (or
+  ## other data.frames!) in without dropping
+  ## attributes.
   else
     x[[j]] <- xj[i, , drop = FALSE]
 }
@@ -519,9 +476,8 @@ implemented as a primitive (and `R` has gotten better about
 performing shallow copies when appropriate) there aren't
 too many needless allocations. And, it's fairly easy to imagine
 this having evolved over `R`'s lifetime to something that was
-once cute and tidy to something that has had to handle all
-version of `data.frame` as it evolved, so let's not be too
-harsh.
+once cute and tidy to something that has had to remain backwards
+compatible as `R` evolved.
 
 That said, there's nothing stopping us from implementing
 the same functionality in a much more sane manner, so let's
@@ -551,7 +507,8 @@ SEXP subset_df(SEXP x,
                IntegerVector row_indices,
                IntegerVector column_indices) {
                  
-  // Get some useful variables (lengths of index vectors)
+  // Get some useful variables
+  // (lengths of index vectors)
   int column_indices_n = column_indices.size();
   int row_indices_n = row_indices.size();
   
@@ -586,11 +543,11 @@ SEXP subset_df(SEXP x,
     
     for (int i = 0; i < row_indices_n; ++i)
     {
-      // Copying vectors is a pain in the butt, because we
-      // need to know the actual type underneath the SEXP.
-      // I'll just handle a couple of the main types. One
-      // could imagine simplifying this with some macro
-      // magic...
+      // Copying vectors is a pain in the butt, because
+      // we need to know the actual type underneath the
+      // SEXP. I'll just handle a couple of the main
+      // types. One could imagine simplifying this with
+      // some macro magic...
       switch (TYPEOF(vec))
       {
       case REALSXP:
@@ -608,19 +565,22 @@ SEXP subset_df(SEXP x,
         break;
       }
     }
+    
+    // Don't need to protect 'vec' anymore
+    UNPROTECT(1);
 
     // And make sure the output list now
     // refers to that vector!
     SET_VECTOR_ELT(output, j, vec);
-
-    // Don't need to protect 'vec' anymore
-    UNPROTECT(1);
   }
-
+  
   // Finally, copy the attributes of `x` to `output`...
   Rf_copyMostAttrib(x, output);
 
-  // ... but set the row names manually.
+  // ... but set the row names manually. Note that this
+  // is the secret method for creating 'compact' row
+  // names, whereby internally R stores the 'empty' row
+  // names object as 'c(NA_integer_, -<nrow>)'.
   Rf_setAttrib(output, R_RowNamesSymbol,
     IntegerVector::create(NA_INTEGER, -row_indices_n));
 
@@ -685,6 +645,9 @@ all.equal(
 
 {% endhighlight %}
 
+It looks identical, barring the difference with `row.names`,
+which we have explicitly decided to avoid.
+
 What about performance? Note that I am somewhat intentionally
 cheating because I don't have any performance hit in
 generating and populating the `row.names` attribute -- but
@@ -709,9 +672,9 @@ microbenchmark(
 
 {% highlight text %}
 ​Unit: microseconds
- expr    min     lq     mean  median      uq     max neval cld
-    R 80.728 83.742 89.19671 85.5575 92.3520 203.344   100   b
-  Cpp  3.059  3.827  5.13581  5.4120  5.7125  27.658   100  a 
+ expr    min     lq     mean  median     uq     max neval cld
+    R 80.358 83.324 89.56236 85.2925 90.503 309.587   100   b
+  Cpp  3.073  3.711  5.31664  5.5675  5.947  29.017   100  a 
 
 {% endhighlight %}
 

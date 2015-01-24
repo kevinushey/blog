@@ -100,7 +100,7 @@ print(utils:::head.default)
     else min(n, length(x))
     x[seq_len(n)]
 }
-<bytecode: 0x7f9d39db7bf8>
+<bytecode: 0x7f8d1ba04790>
 <environment: namespace:utils>
 
 {% endhighlight %}
@@ -123,7 +123,7 @@ print(utils:::tail.default)
     else min(n, xlen)
     x[seq.int(to = xlen, length.out = n)]
 }
-<bytecode: 0x7f9d3da61920>
+<bytecode: 0x7f8d196ebb90>
 <environment: namespace:utils>
 
 {% endhighlight %}
@@ -183,9 +183,9 @@ microbenchmark(
 
 {% highlight text %}
 ​Unit: microseconds
- expr      min        lq     mean   median       uq      max neval cld
-    R 2616.273 3821.7180 5488.897 4353.585 4879.061 42492.43   100   b
-  cpp  464.490  813.7025 2250.506 1011.253 2384.738 40937.20   100  a 
+ expr      min       lq     mean    median       uq      max neval cld
+    R 2861.461 4098.860 6372.765 4665.8230 5064.496 44199.78   100   b
+  cpp  378.009  928.663 1927.118  994.5395 2515.637 38033.75   100  a 
 
 {% endhighlight %}
 
@@ -271,10 +271,10 @@ microbenchmark(
 
 {% highlight text %}
 ​Unit: microseconds
- expr      min        lq    mean   median       uq       max neval cld
-    R 2670.088 3299.1995 4413.11 4270.028 5493.553  7492.546   100   b
-  Cpp  398.881  867.8545 2240.11  946.649 1219.981 47385.696   100  a 
-  len  531.011  965.9580 1358.55 1018.165 1139.345  4784.180   100  a 
+ expr      min        lq     mean   median       uq      max neval cld
+    R 2531.204 3365.8515 4280.739 3777.895 5116.448  7639.72   100   b
+  Cpp  481.612  633.0025 1867.618 1013.053 1273.787 48814.78   100  a 
+  len  583.374  691.5980 1856.405 1080.526 1168.850 46043.33   100  a 
 
 {% endhighlight %}
 
@@ -331,7 +331,9 @@ like:
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector subsequence(NumericVector x, int start, int end) {
+NumericVector subsequence(NumericVector x,
+                          int start,
+                          int end) {
   
   if (start > end)
     return NumericVector();

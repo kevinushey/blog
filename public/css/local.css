@@ -1,0 +1,83 @@
+/* Local styling, built off of lanyon.css */
+
+pre code {
+  font-family: "Droid Sans Mono" "Consolas" "Lucida Console" "Monaco" monospace;
+}
+
+@media (max-width: 38em) {
+
+  .container {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  pre {
+    font-size: 80%;
+  }
+
+}
+
+@media (max-width: 30em) {
+
+  pre {
+    padding: 0.5rem;
+    font-size: 60%;
+
+    /* Hack for readability on mobile */
+    padding: 0;
+    margin-left:  -8px;
+    border-left:   8px solid #F9F9F9;
+    margin-right: -8px;
+    border-right:  8px solid #F9F9F9;
+
+    padding-top: 0.2rem !important;
+    padding-bottom: 0.2rem !important;
+  }
+}
+
+pre {
+  /* No wrapping */
+  white-space: pre;
+  word-break: initial;
+  word-wrap: initial;
+  overflow-x: auto;
+}
+
+.masthead {
+  background-color: #F6F6F6;
+  border-bottom: 1px solid #BBBBBB;
+}
+
+.sidebar-toggle {
+  position: absolute !important;
+  border: 1px solid #BBBBBB;
+}
+
+.post-date {
+  font-size: 80%;
+  color: #888;
+}
+
+hr.post-separator {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+pre code {
+  font-size: 100%;
+}
+
+.container {
+  max-width: 32rem;
+}
+@media (min-width: 38em) {
+  .container {
+    max-width: 34rem;
+  }
+}
+@media (min-width: 56em) {
+  .container {
+    max-width: 38rem;
+  }
+}
+

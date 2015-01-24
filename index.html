@@ -13,9 +13,8 @@ title: Home
     </h1>
 
     <span class="post-date">{{ post.date | date_to_string }}</span>
-    {{ post.content | truncatewords: 50 }}
-    <br />
-    <a href="{{ site.baseurl }}{{ post.url }}"><small>Read More</small></a>
+    {{ post.excerpt }}
+    <a href="{{ site.baseurl }}{{ post.url }}"><small>Read More &rarr;</small></a>
 
   </div>
   <hr />
