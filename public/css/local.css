@@ -48,6 +48,10 @@ pre {
   border-bottom: 1px solid #BBBBBB;
 }
 
+.sidebar {
+  border: 0;
+}
+
 .sidebar-toggle {
   position: absolute !important;
   border: 1px solid #BBBBBB;
