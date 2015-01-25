@@ -85,3 +85,16 @@ pre code {
   }
 }
 
+.archive-post {
+  overflow: auto;
+  padding-bottom: 1rem;
+}
+
+.archive-title {
+  float: left;
+}
+
+.archive-date {
+  float: right;
+  font-size: 80%;
+}

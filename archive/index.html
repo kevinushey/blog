@@ -1,0 +1,27 @@
+---
+layout: default
+title: Archive
+---
+
+<div class="archive">
+
+  <h1 class="archive-header">Archive</h1>
+  <hr class="post-separator">
+
+  {% for post in site.posts %}
+  <div class="archive-post">
+    <span class="archive-title">
+      <a href="{{ site.baseurl }}{{ post.url }}">
+        {{ post.title }}
+      </a>
+    </span>
+    <span class="archive-date">
+      <a href="{{ site.baseurl }}{{ post.url }}">
+        {{ post.date | date: "%B %-d, %Y" }}
+      </a>
+    </span>
+  </div>
+  {% endfor %}
+
+</div>
+
