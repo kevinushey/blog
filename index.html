@@ -12,7 +12,9 @@ title: Home
       </a>
     </h1>
 
-    <span class="post-date">{{ post.date | date_to_string }}</span>
+  <span class="post-date">
+    Posted on <a href="{{ site.baseurl }}{{ post.url }}">{{ post.date | date: "%B %-d, %Y" }}</a>
+  </span>
     {{ post.excerpt }}
     <a href="{{ site.baseurl }}{{ post.url }}"><small>Read More &rarr;</small></a>
 
