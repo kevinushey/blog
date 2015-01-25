@@ -15,7 +15,7 @@ description:         ''
 home:                http://kevinushey.github.io
 url:                 http://kevinushey.github.io/blog
 baseurl:             /blog
-paginate:            1
+paginate:            5
 paginate_path:       "/page:num/"
 exclude:             ['posts']
 
