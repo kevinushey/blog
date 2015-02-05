@@ -31,7 +31,8 @@ If you're short on time, just trust me and put
 this in your `.Rprofile`. Otherwise, read on for
 motiation.
 
-```{r, eval=FALSE}
+
+{% highlight r %}
 # warn on partial matches
 options(warnPartialMatchAttr = TRUE,
         warnPartialMatchDollar = TRUE,
@@ -47,7 +48,7 @@ options(warn = 2)
 # fancy quotes are annoying and lead to
 # 'copy + paste' bugs / frustrations
 options(useFancyQuotes = FALSE)
-```
+{% endhighlight %}
 
 ## Essential Pieces
 
@@ -87,11 +88,19 @@ _not_ partial matching, should solve. But the
 fact that this code works without warnings by default
 is kind of terrifying:
 
-```{r}
+
+{% highlight r %}
 x <- ""
 attr(x, "SomeVariable") <- 1
 attr(x, "Some")
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​[1] 1
+
+{% endhighlight %}
 
 Thankfuly, it's possible to change this behaviour -- it
 just seems a shame that this is not the default. Note
@@ -99,10 +108,18 @@ that if there are _multiple_ prefix matches, `R`
 pretends that neither of them exist (and doesn't give
 you any warning, regardless):
 
-```{r}
+
+{% highlight r %}
 attr(x, "SomeOtherVariable") <- 2
 attr(x, "Some")
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​NULL
+
+{% endhighlight %}
 
 So you can imagine the insidious kinds of bugs that
 could leak in if you actually _relied_ on partial
@@ -153,13 +170,14 @@ create in your `.Rprofile` within its own environment,
 and then attaching that environment to the search path,
 like so:
 
-```{r, eval=FALSE}
+
+{% highlight r %}
 .__Rprofile_env__. <- new.env(parent = emptyenv())
 
 ## ... fill .__Rprofile_env__. with stuff ...
 
 attach(.__Rprofile_env__.)
-```
+{% endhighlight %}
 
 Side note: I would say that this is one of the very
 few legitimate uses of `attach()`, but you should still
@@ -175,7 +193,8 @@ A nice little trick for quickly opening your
 `~/.Rprofile` directly from `R` in your favorite
 editor:
 
-```{r, eval=FALSE}
+
+{% highlight r %}
 ### Use '.Rprofile' to quickly open your ~/.Rprofile
 
 # Create an empty string with class '__Rprofile__'
@@ -193,7 +212,7 @@ assign(".Rprofile",
 assign("print.__Rprofile__",
        function(x) file.edit("~/.Rprofile"),
        envir = .__Rprofile.env__.)
-```
+{% endhighlight %}
   
 This one is nice for when you discover something new
 and decide that it just must live in your `.Rprofile`.
@@ -204,12 +223,22 @@ editing your `.Rprofile`. Neat trick, huh?
 You can further (ab)use this to also make your `R`
 session 'feel' like a shell. For example:
 
-```{r}
+
+{% highlight r %}
 pwd <- ""
 class(pwd) <- "__pwd__"
 print.__pwd__ <- function(x, ...) print(getwd())
 pwd
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​[1] ""
+attr(,"class")
+[1] "__pwd__"
+
+{% endhighlight %}
 
 And now you know how to call functions without actually
 using the `()` symbols. Fun times!
@@ -228,7 +257,8 @@ You can use `devtools::create()` alongside some options
 set in your `.Rprofile` to automate this. For example,
 I have:
 
-```{r, eval=FALSE}
+
+{% highlight r %}
 options("devtools.desc" = list(
   Author = <name>,
   Maintainer = paste0(<name>, " <", <email>, ">"),
@@ -236,7 +266,7 @@ options("devtools.desc" = list(
   Version = "0.0.1"
 ))
 options("devtools.name" = <name>)
-```
+{% endhighlight %}
 
 which ensures that any new packages I create with
 `devtools::create()` are automatically set up with
@@ -249,7 +279,8 @@ will be looking for packages when I start my `R`
 session. Basically, we pretty-print the `.libPaths()`
 variable:
 
-```{r, eval=FALSE}
+
+{% highlight r %}
 if (length(.libPaths()) > 1) {
   msg <- "Using libraries at paths:\n"
 } else {
@@ -257,16 +288,17 @@ if (length(.libPaths()) > 1) {
 }
 libs <- paste("-", .libPaths(), collapse = "\n")
 message(msg, libs, sep = "")
-```
+{% endhighlight %}
 
 ### Don't Let R Blow Up your Console
 
 Did you really want to see all 10000 elements of that
 `list`? Probably not, right? Use:
 
-```{r, eval=FALSE}
+
+{% highlight r %}
 options(max.print = 100)
-```
+{% endhighlight %}
 
 to tune it down a bit.
 
