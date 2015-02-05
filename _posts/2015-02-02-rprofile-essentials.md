@@ -67,7 +67,7 @@ you can see the various options available in the
 I'm not exactly sure why this option is disabled by
 default; perhaps to avoid issues that users with slow
 network drives might have? It certainly is useful when
-you're trying to load certainly long named
+you're trying to load certain long named
 [BioConductor packages](http://master.bioconductor.org/packages/release/data/annotation/html/BSgenome.Hsapiens.UCSC.hg19.html)...
 
 - `options(warnPartialMatchAttr = TRUE)`: Warn on
