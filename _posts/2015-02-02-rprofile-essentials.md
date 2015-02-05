@@ -231,13 +231,8 @@ print.__pwd__ <- function(x, ...) print(getwd())
 pwd
 {% endhighlight %}
 
-
-
 {% highlight text %}
-​[1] ""
-attr(,"class")
-[1] "__pwd__"
-
+/Users/kevinushey/git/blog
 {% endhighlight %}
 
 And now you know how to call functions without actually

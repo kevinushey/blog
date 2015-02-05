@@ -204,12 +204,16 @@ editing your `.Rprofile`. Neat trick, huh?
 You can further (ab)use this to also make your `R`
 session 'feel' like a shell. For example:
 
-```{r}
+```{r, eval=FALSE}
 pwd <- ""
 class(pwd) <- "__pwd__"
 print.__pwd__ <- function(x, ...) print(getwd())
 pwd
 ```
+
+{% highlight text %}
+/Users/kevinushey/git/blog
+{% endhighlight %}
 
 And now you know how to call functions without actually
 using the `()` symbols. Fun times!
