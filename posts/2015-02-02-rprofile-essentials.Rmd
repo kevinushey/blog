@@ -29,7 +29,7 @@ essential bits of my own
 
 If you're short on time, just trust me and put
 this in your `.Rprofile`. Otherwise, read on for
-motiation.
+motivation.
 
 ```{r, eval=FALSE}
 # warn on partial matches
@@ -93,7 +93,7 @@ attr(x, "SomeVariable") <- 1
 attr(x, "Some")
 ```
 
-Thankfuly, it's possible to change this behaviour -- it
+Thankfully, it's possible to change this behaviour -- it
 just seems a shame that this is not the default. Note
 that if there are _multiple_ prefix matches, `R`
 pretends that neither of them exist (and doesn't give
@@ -130,7 +130,7 @@ This is good practice to follow if you want to really
 write robust `R` code. Warnings are printed for a reason,
 and ignoring them is almost never the right response.
 If you _really_ want to ignore a warning, you should
-silence the noisy function explcitily,
+silence the noisy function explicitly,
 with `suppressWarnings()`,
 and provide a nice big comment above why this was the
 correct solution.
