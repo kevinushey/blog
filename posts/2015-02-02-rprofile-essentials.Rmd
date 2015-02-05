@@ -8,7 +8,7 @@ comments : true
 If there's something programmers love, it's dotfiles.
 A rather nice trend on GitHub has been for users to
 include their
-[dotfiles on a public repo](https://github.com/search?utf8=q=dotfiles)
+[dotfiles on a public repo](https://github.com/search?q=dotfiles)
 (a great idea if you want to make your personal
 configuration available across multiple systems --
 just `git clone` and apply!), and it's a somewhat fun
