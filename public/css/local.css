@@ -98,3 +98,7 @@ pre code {
   float: right;
   font-size: 80%;
 }
+
+a code {
+  color: #268bd2 !important;
+}
