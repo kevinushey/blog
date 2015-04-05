@@ -229,11 +229,11 @@ If you're on OS X, you'll want an extra `valgrind` flag
 to ensure that you get line numbers in the error
 th the command line invocation:
 
-    R --vanilla -d "valgrind --dsymutil=yes" -e "Rcpp::sourceCpp('segfault.cpp')"
+    R -d "valgrind --dsymutil=yes" -e "Rcpp::sourceCpp('segfault.cpp')"
     
 Otherwise, you can just write
 
-    R --vanilla -d valgrind -e "Rcpp::sourceCpp('segfault.cpp')"
+    R d valgrind -e "Rcpp::sourceCpp('segfault.cpp')"
 
 Here's the beautiful mess I get:
 
