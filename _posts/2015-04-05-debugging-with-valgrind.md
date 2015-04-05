@@ -235,8 +235,7 @@ ouch()
 
 Now, let's run the script with R + `valgrind`.
 If you're on OS X, you'll want an extra `valgrind` flag
-to ensure that you get line numbers in the error
-th the command line invocation:
+to ensure that you get line numbers in the error output:
 
     R -d "valgrind --dsymutil=yes" -e "Rcpp::sourceCpp('segfault.cpp')"
     
