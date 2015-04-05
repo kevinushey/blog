@@ -9,7 +9,7 @@ Those of you who have attempted to write packages using
 C or C++ source code probably know this picture very 
 well:
 
-![rstudio-bomb](images/rstudio-bomb.png)
+![rstudio-bomb]({{ site.baseurl }}/images/rstudio-bomb.png)
 
 (Or, maybe you just enjoy running the development version
 of [dplyr](https://github.com/hadley/dplyr).)
