@@ -49,7 +49,9 @@ if (!file.exists("hash"))
   dir.create("hash")
 
 # Knit all of the .Rmd documents in post
-posts <- list.files("posts", full.names = TRUE)
+posts <- list.files("posts",
+                    pattern = "Rmd$",
+                    full.names = TRUE)
 
 for (inputPath in posts) {
 
