@@ -68,7 +68,7 @@ for (inputPath in posts) {
   # Check to see if the .Rmd file has actually changed.
   # If not, then don't knit it.
   hashPath <- file.path("hash", fileNameSansExtension)
-  if (file.exists(hashPath))
+  if (file.exists(hashPath) && file.exists(outputPath))
   {
     md5sum <- unname(tools::md5sum(inputPath))
     hash <- scan(what = character(),
