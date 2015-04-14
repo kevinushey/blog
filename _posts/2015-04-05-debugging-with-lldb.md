@@ -438,22 +438,61 @@ internally represent numbers and how they're actually defined
 and used mathematically, it can be somewhat surprising --
 similar to the initial surprise everyone sees with
 
-```{r}
+
+{% highlight r %}
 0.1 + 0.2 == 0.3
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​[1] FALSE
+
+{% endhighlight %}
 
 It's nice to understand that, when you write `0.1` into
 a script, R actually translates that into the closest numeric
 representation it can. You can get a better peek at these
 numbers by setting the `digits` parameter:
 
-```{r}
+
+{% highlight r %}
 options(digits = 22)
 0.1
-0.2
+{% endhighlight %}
 
+
+
+{% highlight text %}
+​[1] 0.1000000000000000055511
+
+{% endhighlight %}
+
+
+
+{% highlight r %}
+0.2
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​[1] 0.2000000000000000111022
+
+{% endhighlight %}
+
+
+
+{% highlight r %}
 c(0.1 + 0.2, 0.3)
-```
+{% endhighlight %}
+
+
+
+{% highlight text %}
+​[1] 0.3000000000000000444089 0.2999999999999999888978
+
+{% endhighlight %}
 
 It also means you should be somewhat suspicious of 
 people who claim that they've figured out a way to 
