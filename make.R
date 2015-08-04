@@ -12,7 +12,10 @@ knitr::opts_chunk$set(
 
 # Ensure knitr documents are knit with this directory
 # (not 'post/') as the root directory
-knitr::opts_knit$set(root.dir = getwd())
+knitr::opts_knit$set(
+  root.dir = getwd(),
+  base.url = "{{ site.baseurl }}/"
+  )
 
 # Insert zero-space UTF-8 characters, to avoid
 # a Jekyll bug that strips leading whitespace in output.
