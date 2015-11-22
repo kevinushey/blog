@@ -20,6 +20,8 @@ a function.
 
 As you might already know from
 [adv-r](http://adv-r.had.co.nz/Functions.html),
+(or, if you're brave, the
+**Technical Details** section of `?"function"`),
 functions are `R` objects made up of three
 components:
 
@@ -259,7 +261,7 @@ c(first = fn(), second = fn())
 
 {% highlight text %}
 $first.eval
-<environment: 0x7fc0ed9e6b18>
+<environment: 0x7f88dd5cacd8>
 
 $first.parent
 <environment: R_GlobalEnv>
@@ -268,7 +270,7 @@ $first.formals
 [1] "a" "b" "c"
 
 $second.eval
-<environment: 0x7fc0ed9e8b50>
+<environment: 0x7f88dd5ccca0>
 
 $second.parent
 <environment: R_GlobalEnv>
@@ -376,7 +378,7 @@ stats::rnorm
 {% highlight text %}
 function (n, mean = 0, sd = 1) 
 .Call(C_rnorm, n, mean, sd)
-<bytecode: 0x7fc0eda3af08>
+<bytecode: 0x7f88dd61f958>
 <environment: namespace:stats>
 
 {% endhighlight %}
@@ -429,7 +431,7 @@ fm$n
 
 
 {% highlight text %}
-@7fc0eb01c708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
+@7f88db81c708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
 
 {% endhighlight %}
 
@@ -710,7 +712,7 @@ evalf(rnorm, list(n = 2))
 
 
 {% highlight text %}
-[1]  1.154253 -2.215781
+[1] 0.9631268 0.4768176
 
 {% endhighlight %}
 

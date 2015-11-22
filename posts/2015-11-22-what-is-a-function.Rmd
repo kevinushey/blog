@@ -20,6 +20,8 @@ a function.
 
 As you might already know from
 [adv-r](http://adv-r.had.co.nz/Functions.html),
+(or, if you're brave, the
+**Technical Details** section of `?"function"`),
 functions are `R` objects made up of three
 components:
 
