@@ -2,11 +2,11 @@
 markdown:            kramdown
 highlighter:         pygments
 
+# Gems
+gems: [jekyll-paginate]
+
 # Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
 permalink:           pretty
-relative_permalinks: true
 
 # Setup
 title:               Musings on R and C++
@@ -16,7 +16,7 @@ home:                http://kevinushey.github.io
 url:                 http://kevinushey.github.io/blog
 baseurl:             /blog
 paginate:            5
-paginate_path:       "/page:num/"
+paginate_path:       "page:num"
 exclude:             ['posts']
 
 # About/contact
@@ -27,3 +27,4 @@ author:
 
 # Custom vars
 version:             1.0.0
+

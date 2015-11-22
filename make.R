@@ -6,8 +6,7 @@ knitr::opts_chunk$set(
   out.extra = '',
   tidy = FALSE,
   comment = NA,
-  results = 'markup',
-  cache = TRUE
+  results = 'markup'
 )
 
 # Ensure knitr documents are knit with this directory
@@ -89,7 +88,7 @@ for (inputPath in posts) {
   knitr::knit(
     input = inputPath,
     output = outputPath,
-    envir = new.env()
+    envir = globalenv()
   )
 
 }
