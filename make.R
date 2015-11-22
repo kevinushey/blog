@@ -33,7 +33,7 @@ hook.r = function(x, options) {
 hook.t = function(x, options) {
   stringr::str_c(
     "\n\n{% highlight text %}\n",
-    paste("\U200B", x, sep = ""), ## hacky workaround for jekyll bug
+    x,
     "\n{% endhighlight %}\n\n"
   )
 }

@@ -48,7 +48,7 @@ body(fn)
 
 
 {% highlight text %}
-​{
+{
     print(x)
 }
 
@@ -71,7 +71,7 @@ do.call(pryr::ast, list(body(fn)))
 
 
 {% highlight text %}
-​\- ()
+\- ()
   \- `{
   \- ()
     \- `print
@@ -106,7 +106,7 @@ definitely not recommended!
 
 
 {% highlight text %}
-​[1] "Hello!"
+[1] "Hello!"
 
 {% endhighlight %}
 
@@ -145,7 +145,7 @@ environment(foo)
 
 
 {% highlight text %}
-​<environment: R_GlobalEnv>
+<environment: R_GlobalEnv>
 
 {% endhighlight %}
 
@@ -160,7 +160,7 @@ foo()
 
 
 {% highlight text %}
-​Error in foo(): object 'a' not found
+Error in foo(): object 'a' not found
 
 {% endhighlight %}
 
@@ -176,7 +176,7 @@ foo()
 
 
 {% highlight text %}
-​[1] 1
+[1] 1
 
 {% endhighlight %}
 
@@ -194,7 +194,7 @@ foo()
 
 
 {% highlight text %}
-​Error in foo(): object 'a' not found
+Error in foo(): object 'a' not found
 
 {% endhighlight %}
 
@@ -210,7 +210,7 @@ foo()
 
 
 {% highlight text %}
-​[1] 1
+[1] 1
 
 {% endhighlight %}
 
@@ -258,8 +258,8 @@ c(first = fn(), second = fn())
 
 
 {% highlight text %}
-​$first.eval
-<environment: 0x7fe186b28158>
+$first.eval
+<environment: 0x7fc0ed9e6b18>
 
 $first.parent
 <environment: R_GlobalEnv>
@@ -268,7 +268,7 @@ $first.formals
 [1] "a" "b" "c"
 
 $second.eval
-<environment: 0x7fe186b2a120>
+<environment: 0x7fc0ed9e8b50>
 
 $second.parent
 <environment: R_GlobalEnv>
@@ -320,7 +320,7 @@ c(fn1(), fn1(), fn1())
 
 
 {% highlight text %}
-​[1] 2 3 4
+[1] 2 3 4
 
 {% endhighlight %}
 
@@ -333,7 +333,7 @@ fn2()
 
 
 {% highlight text %}
-​[1] 2
+[1] 2
 
 {% endhighlight %}
 
@@ -374,9 +374,9 @@ stats::rnorm
 
 
 {% highlight text %}
-​function (n, mean = 0, sd = 1) 
+function (n, mean = 0, sd = 1) 
 .Call(C_rnorm, n, mean, sd)
-<bytecode: 0x7fe186b7dc30>
+<bytecode: 0x7fc0eda3af08>
 <environment: namespace:stats>
 
 {% endhighlight %}
@@ -391,7 +391,7 @@ str(formals(stats::rnorm))
 
 
 {% highlight text %}
-​Dotted pair list of 3
+Dotted pair list of 3
  $ n   : symbol 
  $ mean: num 0
  $ sd  : num 1
@@ -429,7 +429,7 @@ fm$n
 
 
 {% highlight text %}
-​@7fe18301c708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
+@7fc0eb01c708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
 
 {% endhighlight %}
 
@@ -445,7 +445,7 @@ n
 
 
 {% highlight text %}
-​Error in eval(expr, envir, enclos): argument "n" is missing, with no default
+Error in eval(expr, envir, enclos): argument "n" is missing, with no default
 
 {% endhighlight %}
 
@@ -463,7 +463,7 @@ x
 
 
 {% highlight text %}
-​Error in eval(expr, envir, enclos): argument "x" is missing, with no default
+Error in eval(expr, envir, enclos): argument "x" is missing, with no default
 
 {% endhighlight %}
 
@@ -491,14 +491,14 @@ foo(1, 2)
 
 
 {% highlight text %}
-​[1] "a" "b"
+[1] "a" "b"
 
 {% endhighlight %}
 
 
 
 {% highlight text %}
-​[1] 1 2
+[1] 1 2
 
 {% endhighlight %}
 
@@ -513,14 +513,14 @@ foo(1)
 
 
 {% highlight text %}
-​[1] "a" "b"
+[1] "a" "b"
 
 {% endhighlight %}
 
 
 
 {% highlight text %}
-​[[1]]
+[[1]]
 [1] 1
 
 [[2]]
@@ -554,7 +554,7 @@ fn(x = cat("> x\n"))
 
 
 {% highlight text %}
-​+ fn
++ fn
 > x
 - fn
 
@@ -611,7 +611,7 @@ tricky()
 
 
 {% highlight text %}
-​[1] TRUE
+[1] TRUE
 
 {% endhighlight %}
 
@@ -659,7 +659,7 @@ eval(body, envir = eval_env)
 
 
 {% highlight text %}
-​+ fn
++ fn
 > x
 - fn
 
@@ -710,7 +710,7 @@ evalf(rnorm, list(n = 2))
 
 
 {% highlight text %}
-​[1]  0.4022450 -0.7722864
+[1]  1.154253 -2.215781
 
 {% endhighlight %}
 
@@ -731,7 +731,7 @@ evalf(c, list(1, 2, 3))     # nope!
 
 
 {% highlight text %}
-​Error in new.env(parent = fn_env): use of NULL environment is defunct
+Error in new.env(parent = fn_env): use of NULL environment is defunct
 
 {% endhighlight %}
 
@@ -744,7 +744,7 @@ evalf(head, list(x = 1:10)) # sorry!
 
 
 {% highlight text %}
-​Error in eval(expr, envir, enclos): generic 'function' is not a function
+Error in eval(expr, envir, enclos): generic 'function' is not a function
 
 {% endhighlight %}
 
