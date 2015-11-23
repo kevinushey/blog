@@ -421,17 +421,25 @@ this all together in a function. We'll
 call it `evalf()`, for 'evaluate function'.
 
 ```{r}
-# evaluate a function, binding a list
-# of named arguments in the evalution env.
-evalf <- function(fn, args = NULL) {
+# evaluate a function, binding named arguments
+# in '...' to the local evaluation env
+evalf <- function(fn, ...) {
   
+  # collect the main pieces we need for eval
   body <- body(fn)
   fn_env <- environment(fn)
   formals <- formals(fn)
-  
   eval_env <- new.env(parent = fn_env)
   
-  # assign default arguments.
+  # capture unevaluated expressions passed
+  # within the dots
+  dots <- eval(substitute(alist(...)))
+  
+  # assign default arguments
+  # note that, because 'delayedAssign' tries
+  # to capture the passed expression as-is,
+  # we use 'do.call' for force e.g. 'formals[[i]]'
+  # to evaluate to the actual expression within
   for (i in seq_along(formals)) {
     do.call(base::delayedAssign, list(
       names(formals)[[i]], formals[[i]],
@@ -439,21 +447,23 @@ evalf <- function(fn, args = NULL) {
     ))
   }
   
-  # override with user-supplied args.
+  # override with user-supplied args
   for (i in seq_along(args)) {
     do.call(base::delayedAssign, list(
-      names(args)[[i]], args[[i]],
+      names(dots)[[i]], dots[[i]],
       eval_env, eval_env
     ))
   }
   
-  # and evaluate it!
+  # evaluate it!
   eval(body, envir = eval_env)
 }
 
-# use 'evalf' to call 'rnorm',
-# with 'n = 2'.
-evalf(rnorm, list(n = 2))
+# run our original example function
+evalf(fn, x = cat("> x\n"))
+
+# try calling 'rnorm' with 'n = 2'
+evalf(rnorm, n = 2)
 ```
 
 _Voila!_
@@ -466,13 +476,17 @@ so-called `primitive` functions are
 called:
 
 ```{r}
-evalf(c, list(1, 2, 3))     # nope!
-evalf(head, list(x = 1:10)) # sorry!
+evalf(c, 1, 2, 3)           # nope!
+evalf(head, x = 1:10)       # sorry!
 ```
 
-but it does otherwise accurately portray
+It does otherwise accurately portray
 how evaluation of 'vanilla' `R` functions
-works.
+works. Behind the scenes, `R`
+will handle dispatch and such using C code,
+and perform non-standard evalaution to
+handle things like the use of `UseMethod()`
+within a function body.
 
 Hopefully this exercise has helped you
 piece together what happens behind the
@@ -481,3 +495,8 @@ given you some understanding of how
 `R`'s lazy evaluation of function
 arguments works.
 
+______
+
+EDIT 1: Improved implementation of `evalf()`;
+the original version did not capture promises
+appropriately.

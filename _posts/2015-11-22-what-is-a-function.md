@@ -261,7 +261,7 @@ c(first = fn(), second = fn())
 
 {% highlight text %}
 $first.eval
-<environment: 0x7f88dd5cacd8>
+<environment: 0x7fd3c998b8a8>
 
 $first.parent
 <environment: R_GlobalEnv>
@@ -270,7 +270,7 @@ $first.formals
 [1] "a" "b" "c"
 
 $second.eval
-<environment: 0x7f88dd5ccca0>
+<environment: 0x7fd3c99c2ae0>
 
 $second.parent
 <environment: R_GlobalEnv>
@@ -378,7 +378,7 @@ stats::rnorm
 {% highlight text %}
 function (n, mean = 0, sd = 1) 
 .Call(C_rnorm, n, mean, sd)
-<bytecode: 0x7f88dd61f958>
+<bytecode: 0x7fd3cc01a520>
 <environment: namespace:stats>
 
 {% endhighlight %}
@@ -431,7 +431,7 @@ fm$n
 
 
 {% highlight text %}
-@7f88db81c708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
+@7fd3ca000708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
 
 {% endhighlight %}
 
@@ -674,17 +674,25 @@ call it `evalf()`, for 'evaluate function'.
 
 
 {% highlight r %}
-# evaluate a function, binding a list
-# of named arguments in the evalution env.
-evalf <- function(fn, args = NULL) {
+# evaluate a function, binding named arguments
+# in '...' to the local evaluation env
+evalf <- function(fn, ...) {
   
+  # collect the main pieces we need for eval
   body <- body(fn)
   fn_env <- environment(fn)
   formals <- formals(fn)
-  
   eval_env <- new.env(parent = fn_env)
   
-  # assign default arguments.
+  # capture unevaluated expressions passed
+  # within the dots
+  dots <- eval(substitute(alist(...)))
+  
+  # assign default arguments
+  # note that, because 'delayedAssign' tries
+  # to capture the passed expression as-is,
+  # we use 'do.call' for force e.g. 'formals[[i]]'
+  # to evaluate to the actual expression within
   for (i in seq_along(formals)) {
     do.call(base::delayedAssign, list(
       names(formals)[[i]], formals[[i]],
@@ -692,27 +700,42 @@ evalf <- function(fn, args = NULL) {
     ))
   }
   
-  # override with user-supplied args.
+  # override with user-supplied args
   for (i in seq_along(args)) {
     do.call(base::delayedAssign, list(
-      names(args)[[i]], args[[i]],
+      names(dots)[[i]], dots[[i]],
       eval_env, eval_env
     ))
   }
   
-  # and evaluate it!
+  # evaluate it!
   eval(body, envir = eval_env)
 }
 
-# use 'evalf' to call 'rnorm',
-# with 'n = 2'.
-evalf(rnorm, list(n = 2))
+# run our original example function
+evalf(fn, x = cat("> x\n"))
 {% endhighlight %}
 
 
 
 {% highlight text %}
-[1] 0.9631268 0.4768176
++ fn
+> x
+- fn
+
+{% endhighlight %}
+
+
+
+{% highlight r %}
+# try calling 'rnorm' with 'n = 2'
+evalf(rnorm, n = 2)
+{% endhighlight %}
+
+
+
+{% highlight text %}
+[1]  0.97933313 -0.03855628
 
 {% endhighlight %}
 
@@ -727,7 +750,7 @@ called:
 
 
 {% highlight r %}
-evalf(c, list(1, 2, 3))     # nope!
+evalf(c, 1, 2, 3)           # nope!
 {% endhighlight %}
 
 
@@ -740,7 +763,7 @@ Error in new.env(parent = fn_env): use of NULL environment is defunct
 
 
 {% highlight r %}
-evalf(head, list(x = 1:10)) # sorry!
+evalf(head, x = 1:10)       # sorry!
 {% endhighlight %}
 
 
@@ -750,9 +773,13 @@ Error in eval(expr, envir, enclos): generic 'function' is not a function
 
 {% endhighlight %}
 
-but it does otherwise accurately portray
+It does otherwise accurately portray
 how evaluation of 'vanilla' `R` functions
-works.
+works. Behind the scenes, `R`
+will handle dispatch and such using C code,
+and perform non-standard evalaution to
+handle things like the use of `UseMethod()`
+within a function body.
 
 Hopefully this exercise has helped you
 piece together what happens behind the
@@ -761,4 +788,8 @@ given you some understanding of how
 `R`'s lazy evaluation of function
 arguments works.
 
+______
 
+EDIT 1: Improved implementation of `evalf()`;
+the original version did not capture promises
+appropriately.
