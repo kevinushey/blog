@@ -261,7 +261,7 @@ c(first = fn(), second = fn())
 
 {% highlight text %}
 $first.eval
-<environment: 0x7fd3c998b8a8>
+<environment: 0x7fcfc5e0f188>
 
 $first.parent
 <environment: R_GlobalEnv>
@@ -270,7 +270,7 @@ $first.formals
 [1] "a" "b" "c"
 
 $second.eval
-<environment: 0x7fd3c99c2ae0>
+<environment: 0x7fcfc5e0cd78>
 
 $second.parent
 <environment: R_GlobalEnv>
@@ -368,7 +368,7 @@ argument names to default values (if they exist).
 
 
 {% highlight r %}
-# print the functoin to get a synopsis of its
+# print the function to get a synopsis of its
 # formals + body + enclosure.
 stats::rnorm
 {% endhighlight %}
@@ -378,7 +378,7 @@ stats::rnorm
 {% highlight text %}
 function (n, mean = 0, sd = 1) 
 .Call(C_rnorm, n, mean, sd)
-<bytecode: 0x7fd3cc01a520>
+<bytecode: 0x7fcfc5d21070>
 <environment: namespace:stats>
 
 {% endhighlight %}
@@ -431,7 +431,7 @@ fm$n
 
 
 {% highlight text %}
-@7fd3ca000708 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
+@7fcfc5002108 01 SYMSXP g1c0 [MARK,NAM(2)] "" (has value)
 
 {% endhighlight %}
 
@@ -735,7 +735,7 @@ evalf(rnorm, n = 2)
 
 
 {% highlight text %}
-[1]  0.97933313 -0.03855628
+[1] -0.09113057 -0.34948505
 
 {% endhighlight %}
 
@@ -777,7 +777,7 @@ It does otherwise accurately portray
 how evaluation of 'vanilla' `R` functions
 works. Behind the scenes, `R`
 will handle dispatch and such using C code,
-and perform non-standard evalaution to
+and perform non-standard evaluation to
 handle things like the use of `UseMethod()`
 within a function body.
 

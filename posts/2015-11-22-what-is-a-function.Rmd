@@ -236,7 +236,7 @@ The formals of a function can be accessed with
 argument names to default values (if they exist).
 
 ```{r}
-# print the functoin to get a synopsis of its
+# print the function to get a synopsis of its
 # formals + body + enclosure.
 stats::rnorm
 
@@ -484,7 +484,7 @@ It does otherwise accurately portray
 how evaluation of 'vanilla' `R` functions
 works. Behind the scenes, `R`
 will handle dispatch and such using C code,
-and perform non-standard evalaution to
+and perform non-standard evaluation to
 handle things like the use of `UseMethod()`
 within a function body.
 
