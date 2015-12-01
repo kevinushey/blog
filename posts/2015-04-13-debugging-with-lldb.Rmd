@@ -526,7 +526,7 @@ then manually run your script. In other words,
 Fortunately, this will change in the upcoming release
 of `lldb`, with a new `--batch` argument. If you are
 incredibly brave, you can try building `lldb` from
-source. I have a script [here](https://github.com/kevinushey/etc/blob/master/Mac/install-lldb.sh)
+source. I have a script [here](https://github.com/kevinushey/etc/blob/master/platform/mac/install-lldb.sh)
 that attempts to automate the process, but I very
 strongly suggest you read before executing it
 willy-nilly, as you need to do some code signing to
@@ -534,7 +534,7 @@ ensure everything works.
 
 After installing that, you'll be able to run `lldb`
 semi-non-interactively with
-[this little script](https://github.com/kevinushey/etc/blob/master/R/Mac/r-lldb),
+[this little script](https://github.com/kevinushey/etc/blob/master/lang/r/mac/r-lldb),
 which lets you non-interactively run an R script
 with `lldb`:
 
