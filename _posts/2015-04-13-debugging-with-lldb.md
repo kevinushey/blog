@@ -446,7 +446,7 @@ similar to the initial surprise everyone sees with
 
 
 {% highlight text %}
-​[1] FALSE
+[1] FALSE
 
 {% endhighlight %}
 
@@ -464,7 +464,7 @@ options(digits = 22)
 
 
 {% highlight text %}
-​[1] 0.1000000000000000055511
+[1] 0.1000000000000000055511
 
 {% endhighlight %}
 
@@ -477,7 +477,7 @@ options(digits = 22)
 
 
 {% highlight text %}
-​[1] 0.2000000000000000111022
+[1] 0.2000000000000000111022
 
 {% endhighlight %}
 
@@ -490,7 +490,7 @@ c(0.1 + 0.2, 0.3)
 
 
 {% highlight text %}
-​[1] 0.3000000000000000444089 0.2999999999999999888978
+[1] 0.3000000000000000444089 0.2999999999999999888978
 
 {% endhighlight %}
 
@@ -580,11 +580,11 @@ with `lldb`:
     #!/usr/bin/env sh
 
     ## Run an R command within LLDB, in batch mode.
-    : ${R_HOME:=$(which R | xargs greadlink | xargs dirname | xargs dirname)}
+    : ${R_HOME:=$(R RHOME)}
     : ${R_EXEC:=${R_HOME}/bin/exec/R}
     
-    R_HOME=${R_HOME} lldb --batch --file "${R_EXEC}" -o "process launch -- -f $1"
+    R_HOME=${R_HOME} lldb --batch --file "${R_EXEC}" -o "process launch -- $1"
 
-With this, I can execute `r-lldb test.R` to start `lldb`,
+With this, I can execute `r-lldb -f test.R` to start `lldb`,
 jump into R, run `test.R`, and have it immediately
 break if a segfault is encountered. Huzzah!
