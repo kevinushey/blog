@@ -81,11 +81,9 @@ double sum(Ts... ts) {
 
 Unfortunately, this won't do. Here's what I get from `clang`:
 
-```
-error: expression contains unexpanded parameter pack 'ts'
-  for (auto el : ts)
-                 ^~
-```
+    error: expression contains unexpanded parameter pack 'ts'
+      for (auto el : ts)
+                     ^~
 
 When it comes to handling variadic functions, you can't
 think in the standard 'iterative' C++ style. You need to
