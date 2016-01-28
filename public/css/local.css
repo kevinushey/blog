@@ -102,3 +102,7 @@ pre code {
 a code {
   color: #268bd2 !important;
 }
+
+p code {
+   white-space: nowrap;
+}
