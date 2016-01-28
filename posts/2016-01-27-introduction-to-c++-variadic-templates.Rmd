@@ -112,7 +112,7 @@ double sum(T t, Rest... rest) {
 
 We have our 'base' case, accepting one argument `T`,
 and our 'recursive' case, accepting one or more arguments
-`T` and `Ts`. (Recall that a template parameter pack can be empty!)
+`T` and `Rest`. (Recall that a template parameter pack can be empty!)
 
 How exactly does this work? Let's trace what happens when
 we try to call, for example, `sum(1, 2, 3)`. This is going
@@ -226,14 +226,13 @@ the resulting code:
     2 + (square(4) + power_sum(square(square(6)));
     2 + (square(4) + (square(square(6))))
 
-It's important to note that `...` can be used to expand a
-_whole expression_ containing a parameter pack -- this is
-what makes it so powerful! On the downside, this expansion
-can only occur within a function call -- you can't just
-expand any arbitrary expression. Clever use of `...`
-expansion can allow you to avoid recursion in some cases,
-although some extra tricks beyond the scope of this article
-are required.
+It's important to note that `...` can be used to expand a 
+_whole expression_ containing a parameter pack -- this is 
+what makes it so powerful! On the downside, this expansion 
+can only occur in certain contexts, e.g. within a function
+call. Clever use of `...` expansion can allow you to avoid
+recursion in some cases, although some extra tricks beyond
+the scope of this article are required.
 
 ## Conclusion
 
