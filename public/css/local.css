@@ -1,7 +1,7 @@
 /* Local styling, built off of lanyon.css */
 
 pre code {
-  font-family: "Droid Sans Mono" "Consolas" "Lucida Console" "Monaco" monospace;
+  font-family: "Droid Sans Mono", "Consolas", "Lucida Console", "Monaco", monospace;
 }
 
 @media (max-width: 38em) {
