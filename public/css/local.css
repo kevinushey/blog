@@ -1,6 +1,6 @@
 /* Local styling, built off of lanyon.css */
 
-pre code {
+pre, code, pre code {
   font-family: "Droid Sans Mono", "Consolas", "Lucida Console", "Monaco", monospace;
 }
 
