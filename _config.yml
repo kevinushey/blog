@@ -1,6 +1,6 @@
 # Dependencies
 markdown:            kramdown
-highlighter:         pygments
+highlighter:         rouge
 
 # Permalinks
 #
@@ -17,6 +17,7 @@ baseurl:             /blog
 paginate:            5
 paginate_path:       "/page:num/"
 exclude:             ['posts']
+gems:                ['jekyll-paginate']
 
 # About/contact
 author:
