@@ -104,7 +104,9 @@ recursive-descent based parser for a language, but it's
 boring, unwieldy, and slow.
 
 And then I discovered **top-down operator precedence (TDOP)**
-parsing -- a parsing technique that handles operator
+parsers (also called [Pratt parsers](https://en.wikipedia.org/wiki/Pratt_parser),
+named for Vaughan Pratt, who introduced this in his 1973 paper [Top-Down Operator Precedence](http://dl.acm.org/citation.cfm?id=512931).)
+This is a parsing technique that handles operator
 precedence, both unary and binary, in an extremely elegant,
 clean, and performant fashion. I stumbled upon it when I
 learned about
@@ -178,7 +180,7 @@ index <- 0
 
 # Tokenize our document by splitting on whitespace.
 tokenize <- function(program) {
-  tokens <<- unlist(strsplit(program, "\\s+", perl = TRUE))
+  tokens <<- unlist(strsplit(program, "\\s+"))
   index  <<- 1
   tokens[index]
 }
@@ -309,7 +311,7 @@ tokens <- c()
 index <- 0
 
 tokenize <- function(program) {
-  tokens <<- unlist(strsplit(program, "\\s+", perl = TRUE))
+  tokens <<- unlist(strsplit(program, "\\s+"))
   index <<- 1
   tokens
 }
@@ -326,19 +328,22 @@ consume <- function() {
 
 parseExpressionContinuation <- function(node) {
   token <- consume()
-  call(token, node, parseExpression(binaryPrecedence(token)))
+  call(token,
+       node,
+       parseExpression(binaryPrecedence(token)))
 }
 
-# Parsing routine that is executed for syntactic elements
-# that can begin an expression. For our simple calculator,
-# this is just the number as-is.
+# Parsing routine that is executed for syntactic
+# elements that can begin an expression. For our
+# simple calculator, this is just the number as-is.
 parseExpressionStart <- function() {
   token <- consume()
   as.numeric(token)
 }
 
-# The parse engine, beautiful and glorious in its simplicity.
-# Given a precedence 'precedence', parses an expression.
+# The parse engine, beautiful and glorious in its
+# simplicity. Given a precedence 'precedence',
+# parses an expression.
 parseExpression <- function(precedence = 0) {
   node <- parseExpressionStart()
   while (precedence < binaryPrecedence(current()))
@@ -468,8 +473,8 @@ abstract out the concept of operators and precedence:
 
 
 {% highlight r %}
-# Store a precedence table, that maps unary and binary operators
-# to their associated precedene values.
+# Store a precedence table, that maps unary and
+# binary operators to their associated precedences.
 PRECEDENCE <- list(
   unary = list("+" = 100, "-" = 100),
   binary = list("+" = 10, "-" = 10,
@@ -494,12 +499,14 @@ binaryPrecedence <- function(token) {
 
 parseExpressionContinuation <- function(node) {
   token <- consume()
-  call(token, node, parseExpression(binaryPrecedence(token)))
+  call(token,
+       node,
+       parseExpression(binaryPrecedence(token)))
 }
 
-# Note that our 'parseExpressionStart()' now accepts both
-# unary operators (by checking the precedence table) as
-# well as plain number tokens.
+# Note that our 'parseExpressionStart()' now
+# accepts both unary operators (by checking the
+# precedence table) as well as plain numbers.
 parseExpressionStart <- function() {
   token <- consume()
   if (token %in% names(PRECEDENCE$unary))
@@ -626,7 +633,8 @@ CONSTRUCTS[["unless"]] <- function() {
   call("unless", condition, expression)
 }
 
-# Augment our 'parseExpressionStart()' function to accept this
+# Augment our 'parseExpressionStart()' function to
+# accept custom constructs.
 parseExpressionStart <- function() {
   token <- consume()
   if (token %in% names(CONSTRUCTS))
