@@ -122,7 +122,10 @@ denotation') and `nud` ('null denotation') which are opaque
 enough that my brain hiccups whenever I see them. That said,
 even if my blog post is (hopefully) a more accessible 
 introduction, I highly recommend that you read Crockford's 
-article next.
+article next. Alternatively (hat tip to [@tjmahr](https://twitter.com/tjmahr)), you
+can watch Douglas Crockford's recent video [Syntaxation](https://www.youtube.com/watch?v=Nlqv6NtBXcA),
+where he discusses TDOP parsing (we share a similar love
+of the core of TDOP).
 
 I think the core concepts behind TDOP parsers can be 
 expressed much more plainly. So, here goes. In a language, 
@@ -696,6 +699,8 @@ extensions. Parse on!
 
 This blog post is highly inspired by the following posts, but
 of course presents its implementation in R.
+
+- [Syntaxation](https://www.youtube.com/watch?v=Nlqv6NtBXcA): Douglas Crockford's talk re: TDOP.
 
 - [Top Down Operator Precedence](http://javascript.crockford.com/tdop/tdop.html): Douglas Crockford's use of TDOP in JSLint.
 
