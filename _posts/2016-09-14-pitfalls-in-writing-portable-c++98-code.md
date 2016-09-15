@@ -241,6 +241,11 @@ used by R packages that the CRAN maintainers have seen throughout the years.
 Treat this section as another mini-checklist before submitting an R package 
 containing C++ code to CRAN.
 
+Martyn Plummer also has an article in the R Journal,
+[Portable C++ for R Packages](https://journal.r-project.org/archive/2011-2/RJournal_2011-2_Plummer.pdf),
+which (having discovered after writing an initial iteration of this blog post)
+discusses many of the same points in this blog post, in some more detail.
+
 > Rule: Review the 'Portable C and C++ Code' section before submitting your package to CRAN.
 
 ### Leaky Compilers
