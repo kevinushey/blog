@@ -24,9 +24,9 @@ The CRAN Solaris build machines use the Oracle Studio compilers, alongside
 their `stlport4` C++ standard library. Together, these adopt a very strict
 interpretation of the C++98 standard. While `gcc` and `clang` often take a
 "I know what you mean" approach to compiling your code, the Solaris compilers
-take a more "This is what the standard says" approach.
+take a more "this is what the standard says" approach.
 
-With that, let's get started.
+With that said, let's get started.
 
 ### C++11
 
@@ -45,15 +45,15 @@ For R packages, using C++11 is as simple as placing the following line in your
 
     CXX_STD = CXX11
 
-Recent versions of R-devel even come with support for the C++14 standard. So, if
-you can, please use modern C++ -- for your own sanity, and also as an extra
+The development versions of R even come with support for the C++14 standard. So,
+if you can, please use modern C++ -- for your own sanity, and also as an extra 
 layer of protection versus the common portability pitfalls.
 
 > Rule: If you can, use the most recent version of the C++ standard available.
 
 ### Standard Library Headers
 
-The following code will fail to compile on Solaris.
+The following code may fail to compile on Solaris:
 
 ```cpp
 #include <cstdio>
@@ -70,20 +70,22 @@ $ CC -library=stlport4 string_length.cpp
 2 Error(s) detected.
 ```
 
-The C++ standard library headers that 'wrap' their C counterparts are typically
-prefixed with a `c` and contain no extension, e.g. `<cstring>`; while the C
-headers themselves are typically called as e.g. `<string.h>`. When the
-`<cstring>` header is included in a translation unit, the compiler:
+The C++ standard library headers that 'wrap' their C counterparts are typically 
+prefixed with a `c` and contain no extension, e.g. `<cstring>`; while the C 
+headers themselves are typically given a `.h` extension, e.g. `<string.h>`. When
+the `<cstring>` header is included in a translation unit, the C++98 standard
+dictates that the compiler:
 
-- *Must* define the members e.g. `strlen` in the `std::` namespace, and
-- *May* define the members e.g. `strlen` in the _global_ namespace.
+- *Must* define its members (e.g. `strlen`) in the `std::` namespace, and
+- *May* define its members (e.g. `strlen`) in the _global_ namespace.
 
 In fact, `gcc` and `clang` both accept the above code, but the Solaris compilers
-do not. (By default, the Solaris compilers do not populate the global namespace
-when including such headers.)
+do not. (The Solaris compilers do not populate the global namespace
+when including these headers.)
 
-> Rule: If you include a C++-style header, reference symbols from the `std`
-  namespace. Prefer using C++-style headers.
+> Rule: If you include a C++-style standard library header, reference symbols 
+  from the `std` namespace. Prefer using C++-style standard library headers over 
+  the original C counterpart.
 
 ### C99
 
@@ -97,11 +99,11 @@ Examples that I've bumped into thus far are:
 - `snprintf` / `vsnprintf`
 - `isblank`
 - Fixed-width integer types (`uint8_t` etc., from [`<cstdint>`](http://en.cppreference.com/w/cpp/types/integer))
-- Variadic macros, `__VA_ARGS__`
+- Variadic macros
 
-Since most compiler suites that compile C++ also compile C, such compilers
-typically make those symbols available to C++ code. However, strictly speaking,
-these are _not_ available in the C++98 standard, and so expect compiler errors
+Since most compiler suites that compile C++ also compile C, such compilers 
+typically make those symbols available to C++ code. However, strictly speaking, 
+these are _not_ available in the C++98 standard, and so expect compiler errors 
 on Solaris if you use these features.
 
 > Rule: Avoid using symbols defined newly in the C99 standard, as the Solaris
@@ -124,10 +126,10 @@ Can you guess why? In fact, the `logic_error` class has
 1. `explicit logic_error(const std::string& what_arg);`
 2. `explicit logic_error(const char* what_arg);`
 
-The second constructor was added only in C++11, so a strictly conforming
-compiler may not provide it. And, because the constructor is marked `explicit`,
-the compiler should not attempt to convert the user-provided `const char*` to
-`std::string`, to invoke the first constructor. As you can imagine, most
+The second constructor was added only in C++11, so a strictly conforming C++98
+compiler may not provide it. And, because the constructor is marked `explicit`, 
+the compiler will not attempt to convert the user-provided `const char*` to 
+`std::string`, to invoke the first constructor. As you can imagine, most 
 friendly compilers will accept your code either way as the intention is obvious,
 but don't expect Solaris to be friendly.
 
@@ -143,9 +145,11 @@ a whitespace character, or something else? The `<cctype>` header provides utilit
 for assessing this, with e.g. [`std::isspace`](http://en.cppreference.com/w/cpp/string/byte/isspace).
 Unfortunately, these functions are _dangerous_ for one main reason:
 
-- The behavior is __undefined__ if the value of ch is not representable as `unsigned char` and is not equal to EOF.
+- The behavior is __undefined__ if the value of ch is not representable as
+  `unsigned char` and is not equal to EOF.
 
-Together, this implies a very counter-intuitive result for the following program:
+Together, this implies a very counter-intuitive result for the following program
+on Solaris:
 
 ```cpp
 #include <stdio.h>
@@ -169,11 +173,11 @@ is whitespace: 8
 What happened here? Well:
 
 1. `'\xa1'` (normally, the '¡' character in latin-1 or UTF-8 locales) is assigned to a `char`,
-2. Because the integer value of `'\xa1'` (161) lies outside the range of a `char`, it's
-   converted to `-95`,
-3. Because `-95` is not representable as an `unsigned char`, the program is undefined.
-4. Solaris takes the 'undefined' interpretation literally, and gives you an unexpected result
-   over an expected result.
+2. Because the integer value of `'\xa1'` (`161`) lies outside the range of a `char`, it's
+   converted to `-95` (`161 - 256`, wrapping around),
+3. Because `-95` is not representable as an `unsigned char`, the program is undefined,
+4. Solaris takes the 'undefined' interpretation literally, and gives you an
+   unexpected result over an expected result.
 
 Now, you might argue that the behavior is clearly documented and it's the
 authors fault for writing a program that exhibits this behavior, but it's
@@ -210,8 +214,13 @@ boolean isWhitespace(char ch) {
 ```
 
 This of course does not capture all kinds of whitespace characters. For example,
-the Unicode standard defines a whole slew of [multibyte white space characters](https://en.wikipedia.org/wiki/Whitespace_character),
-but then again, `<cctype>` isn't going to help you there either!
+the Unicode standard defines a whole slew of [multibyte white space characters](https://en.wikipedia.org/wiki/Whitespace_character);
+figuring out how to handle all of that is beyond the scope of this
+post.
+
+Interestingly, the wide character analogues defined in
+[`<cwctype>`](http://en.cppreference.com/w/cpp/string/wide/iswspace) don't
+appear to come with the same caveat, and hence should be safer to use.
 
 > Rule: Be careful when using `<cctype>` -- either write your own wrappers, or ensure
   you cast to unsigned char first.
@@ -221,10 +230,13 @@ but then again, `<cctype>` isn't going to help you there either!
 If you're not already aware, the [R Manuals](https://cran.r-project.org/manuals.html), and 
 [Writing R Extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html) in
 particular, are excellent references for common issues encountered when using R.
+They're not perfect -- I often find it difficult to remember which manual
+contains which bit of relevant information I'm looking for -- but they are
+incredibly comprehensive and actively updated by the R Core team.
 
 The section in _Writing R Extensions_ on [Portable C and C++ 
 code](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code)
-is also a very nice reference for common portability pitfalls in the C++ code 
+is a very nice reference for common portability pitfalls in the C++ code 
 used by R packages that the CRAN maintainers have seen throughout the years. 
 Treat this section as another mini-checklist before submitting an R package 
 containing C++ code to CRAN.
@@ -251,10 +263,10 @@ including, for example, `<iterator>`. (See [here](http://stackoverflow.com/quest
 
 ### Don't Panic
 
-Let's be honest. It's _really_ easy to make mistakes when attempting to write
-C++ code that strictly adheres to the C++98 standard, and portability issues
+Let's be honest. It's _really_ easy to make mistakes when attempting to write 
+C++ code that strictly adheres to the C++98 standard, and portability issues 
 create frustration for everyone (you and the CRAN maintainers included). The net
-result is still a better package that is more likely to be portable outside of
+result is still a better package that is more likely to be portable outside of 
 the `gcc` / `clang` ecosystem.
 
 Do your best, be friendly and up-front with the CRAN maintainers when you're
