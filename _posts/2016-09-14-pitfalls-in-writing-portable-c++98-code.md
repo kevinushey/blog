@@ -213,7 +213,7 @@ This of course does not capture all kinds of whitespace characters. For example,
 the Unicode standard defines a whole slew of [multibyte white space characters](https://en.wikipedia.org/wiki/Whitespace_character),
 but then again, `<cctype>` isn't going to help you there either!
 
-> Rule: Be careful when using `<cctype>` -- either use your own wrappers, or ensure
+> Rule: Be careful when using `<cctype>` -- either write your own wrappers, or ensure
   you cast to unsigned char first.
 
 ### The R Manuals
