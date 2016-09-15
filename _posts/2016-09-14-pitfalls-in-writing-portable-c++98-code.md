@@ -175,9 +175,9 @@ What happened here? Well:
 4. Solaris takes the 'undefined' interpretation literally, and gives you an unexpected result
    over an expected result.
 
-Now, you might argue that the behavior is clearly defined and it's the authors fault
-for writing a program that exhibits this behavior, but it's unfortunately easy to do.
-For example:
+Now, you might argue that the behavior is clearly documented and it's the
+authors fault for writing a program that exhibits this behavior, but it's
+unfortunately easy to do. For example:
 
 ```cpp
 #include <cctype>
@@ -192,8 +192,7 @@ int countWhitespace(const char* bytes) {
 
 This is the kind of program that only looks obviously wrong if you're an expert,
 and I think even experts could miss this. The solution is to explicitly cast
-any `char`s to `unsigned char` before passing them to `<cctype>` functions,
-to avoid having the library invoke undefined behavior on your program.
+any `char`s to `unsigned char` before passing them to `<cctype>` functions.
 
 Or, just write your own wrapper functions that accept `const char*` and do the
 right thing. For example, it might suffice to just use:
@@ -232,6 +231,24 @@ containing C++ code to CRAN.
 
 > Rule: Review the 'Portable C and C++ Code' section before submitting your package to CRAN.
 
+### Leaky Compilers
+
+Unfortunately, some compilers will leak macro definitions that can conflict with
+your code unexpectedly. Some such symbols, as discussed in [Portable C and C++ 
+code](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code),
+are:
+
+- `ERR`
+- `zero`
+- `I`
+- `CS`, `DS`, `ES`, `FS`, `GS` and `SS`
+
+Solaris isn't the only leaky compiler -- `gcc` also 'leaks' `major` and `minor` macro definitions
+when including `<sys/sysmacros.h>`, and this header might find its way into your program when
+including, for example, `<iterator>`. (See [here](http://stackoverflow.com/questions/22240973/major-and-minor-macros-defined-in-sys-sysmacros-h-pulled-in-by-iterator) for one such example.)
+
+> Rule: Be aware of macro pollution.
+
 ### Don't Panic
 
 Let's be honest. It's _really_ easy to make mistakes when attempting to write
@@ -245,6 +262,8 @@ submitting (or re-submitting) a package containing C++ code that produces
 compiler errors, and try to learn a little bit more each time.
 
 > Rule: Remember to take a deep breath, and be patient.
+
+## Wrapping Up
 
 Hopefully, this post will help you (or possibly just future me) to avoid
 headaches with your next CRAN package submission containing C++ code.
