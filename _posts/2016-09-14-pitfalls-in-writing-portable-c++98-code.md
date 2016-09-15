@@ -14,14 +14,14 @@ For the unaware -- the compilers used on the Solaris machines ([Oracle Solaris
 Studio](https://www.oracle.com/tools/developerstudio/index.html), or more 
 recently, Oracle Developer Studio) are __very__ picky when it comes to C++ code 
 that should respect the C++98 standard. This implies none of the goodies that 
-are available with the C99 standard, nor some of the more 'minor features of the
+are available with the C99 standard, nor some of the more 'minor' features of the
 C++11 standard. Notably, `gcc` and `clang` often make these features available 
 when compiling with `-std=c++98`, or otherwise make them available if the `-std`
-flag is not explicitly specified, so it's very easily to 'accidentally' fail to 
-adhere to the C++98 standard.
+flag is not explicitly specified, so it's very easily to accidentally fail to 
+adhere to the C++98 standard, without really knowing it.
 
 The CRAN Solaris build machines use the Oracle Studio compilers, alongside
-the `stlport4` C++ standard library. Together, these adopt a very strict
+their `stlport4` C++ standard library. Together, these adopt a very strict
 interpretation of the C++98 standard. While `gcc` and `clang` often take a
 "I know what you mean" approach to compiling your code, the Solaris compilers
 take a more "This is what the standard says" approach.
@@ -37,7 +37,8 @@ et. al](https://github.com/rwinlib/r-base#readme), and with much help from Dunca
 Murdoch + others.
 
 The only reason _not_ to use C++11 nowadays is if your package needs to build on
-older machines (Red Hat Enterprise Linux 5 + `gcc-4.4`, I'm looking at you). 
+older machines (Red Hat Enterprise Linux 5 + `gcc-4.4`, I'm looking at you), but
+even then one can compile with `-std=c++0x` to get a subset of C++11 features.
 
 For R packages, using C++11 is as simple as placing the following line in your
 `src/Makevars` and `src/Makevars.win` files:
@@ -78,7 +79,8 @@ headers themselves are typically called as e.g. `<string.h>`. When the
 - *May* define the members e.g. `strlen` in the _global_ namespace.
 
 In fact, `gcc` and `clang` both accept the above code, but the Solaris compilers
-do not. (By default, they do not populate the global namespace with such headers.)
+do not. (By default, the Solaris compilers do not populate the global namespace
+when including such headers.)
 
 > Rule: If you include a C++-style header, reference symbols from the `std`
   namespace. Prefer using C++-style headers.
@@ -88,8 +90,8 @@ do not. (By default, they do not populate the global namespace with such headers
 The C++98 standard was ratified at an unfortunate time -- it came just one year
 before the C99 standard, and the C99 standard introduced a number of tools that
 make it easier to write safe + correct C code. Some of the newer pieces that
-became part of the C99 standard made it into C++98, but some didn't. Some
-examples that I've bumped into are:
+became part of the C99 standard made it into C++98, but some didn't.
+Examples that I've bumped into thus far are:
 
 - `long long`
 - `snprintf` / `vsnprintf`
@@ -97,11 +99,10 @@ examples that I've bumped into are:
 - Fixed-width integer types (`uint8_t` etc., from [`<cstdint>`](http://en.cppreference.com/w/cpp/types/integer))
 - Variadic macros, `__VA_ARGS__`
 
-These were defined in the C99 standard, and since most compiler suites that 
-compile C++ also compile C, such compilers typically make those symbols 
-available to C++ code. However, strictly speaking, these are _not_ available in
-the C++98 standard, and so expect compiler errors on Solaris if you use these
-features.
+Since most compiler suites that compile C++ also compile C, such compilers
+typically make those symbols available to C++ code. However, strictly speaking,
+these are _not_ available in the C++98 standard, and so expect compiler errors
+on Solaris if you use these features.
 
 > Rule: Avoid using symbols defined newly in the C99 standard, as the Solaris
   compilers may not make them available when compiling in C++98 mode.
@@ -135,7 +136,7 @@ of the exception classes defined in [`<stdexcept>`](http://en.cppreference.com/w
 
 > Rule: Avoid constructing exception objects with C strings.
 
-### Be Careful with <cctype>
+### Be Careful with `<cctype>`
 
 Have you ever wanted to know whether a particular `char` is a letter, a number,
 a whitespace character, or something else? The `<cctype>` header provides utilities
