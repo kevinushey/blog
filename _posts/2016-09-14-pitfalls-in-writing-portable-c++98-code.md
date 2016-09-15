@@ -219,10 +219,10 @@ but then again, `<cctype>` isn't going to help you there either!
 ### The R Manuals
 
 If you're not already aware, the [R Manuals](https://cran.r-project.org/manuals.html), and 
-[R-exts](https://cran.r-project.org/doc/manuals/r-release/R-exts.html) in
+[Writing R Extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html) in
 particular, are excellent references for common issues encountered when using R.
 
-The section in R-exts on [Portable C and C++ 
+The section in _Writing R Extensions_ on [Portable C and C++ 
 code](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code)
 is also a very nice reference for common portability pitfalls in the C++ code 
 used by R packages that the CRAN maintainers have seen throughout the years. 
