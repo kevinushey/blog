@@ -13,7 +13,7 @@ containing package to CRAN.
 
 For the unaware, the CRAN build machines encompass four main platforms: Linux,
 OS X (macOS), Windows, and Solaris. The compilers used on the Solaris machines
-([Oracle Solaris  Studio](https://www.oracle.com/tools/developerstudio/index.html),
+([Oracle Solaris Studio](https://www.oracle.com/tools/developerstudio/index.html),
 or more recently, Oracle Developer Studio) are __very__ picky when it comes to
 C++ code that should respect the C++98 standard. This implies none of the
 goodies that are available with the C99 standard, nor some of the more 'minor'
@@ -34,14 +34,18 @@ With that said, let's get started.
 ### C++11
 
 If you can use C++11 (or greater) when compiling your package's C++ code, _just
-do it_. All of the platforms used on CRAN support C++11 now -- most recently, 
-Windows joined the club with the toolchain update spearheaded by [Jeroen Ooms 
-et. al](https://github.com/rwinlib/r-base#readme), and with much help from Duncan 
-Murdoch + others.
+do it_. The C++11 standard adds a slew of excellent features, while fixing a few
+omissions of the C++98 standard. Overall, C++11 makes it easier to write
+cross-platform, portable C++ programs. All of the platforms used on CRAN support
+C++11 now -- most recently, Windows joined the club with the toolchain update
+spearheaded by [Jeroen Ooms et. al](https://github.com/rwinlib/r-base#readme),
+and with much help from Duncan Murdoch + others.
 
 The only reason _not_ to use C++11 nowadays is if your package needs to build on
 older machines (Red Hat Enterprise Linux 5 + `gcc-4.4`, I'm looking at you), but
 even then one can compile with `-std=c++0x` to get a subset of C++11 features.
+(R users in such environments will likely need to manually set
+`CXX1XSTD = -std=c++0x` in a local `~/.R/Makeconf`, or something similar.)
 
 For R packages, using C++11 is as simple as placing the following line in your
 `src/Makevars` and `src/Makevars.win` files:
@@ -59,7 +63,7 @@ layer of protection versus the common portability pitfalls.
 The following code may fail to compile on Solaris:
 
 ```cpp
-#include <cstdio>
+#include <cstring>
 size_t string_length(const char* string) {
   return ::strlen(string);
 }
@@ -104,10 +108,25 @@ Examples that I've bumped into thus far are:
 - Fixed-width integer types (`uint8_t` etc., from [`<cstdint>`](http://en.cppreference.com/w/cpp/types/integer))
 - Variadic macros
 
-Since most compiler suites that compile C++ also compile C, such compilers 
-typically make those symbols available to C++ code. However, strictly speaking, 
-these are _not_ available in the C++98 standard, and so expect compiler errors 
-on Solaris if you use these features.
+`long long` in particular has been a thorny issue, as many modern C++ libraries,
+such as [Boost](http://www.boost.org/) (which you might be using through the 
+CRAN [BH](https://cran.r-project.org/package=BH) package), will just assume that
+your compiler defines the `long long` type, regardless of what version of the 
+standard you attempt to compile the associated code with. Attempts to compile
+such code may cause your compiler to generate warnings, and CRAN may reject
+your package on the basis of these warnings. (Because your package would crash
+and burn on Solaris.) In Boost's case, you often need to add something like this
+to your `src/Makevars[.win]`:
+
+    PKG_CXXFLAGS = -DBOOST_NO_INT64_T -DBOOST_NO_INTEGRAL_INT64_T -DBOOST_NO_LONG_LONG
+
+See the [dplyr](https://github.com/hadley/dplyr/blob/6153e136fa9397e88478fa6270d9d1f02eb5153e/src/Makevars)
+`Makevars` file for an example of this.
+
+Most compiler suites that compile C++ also compile C and support the C99 
+standard, and often make those symbols available to C++ code. However, strictly
+speaking, these are _not_ available in the C++98 standard, and so expect
+compiler errors on Solaris if you use these features.
 
 > Rule: Avoid using symbols defined newly in the C99 standard, as the Solaris
   compilers may not make them available when compiling in C++98 mode.
@@ -148,19 +167,19 @@ a whitespace character, or something else? The `<cctype>` header provides utilit
 for assessing this, with e.g. [`std::isspace`](http://en.cppreference.com/w/cpp/string/byte/isspace).
 Unfortunately, these functions are _dangerous_ for one main reason:
 
-- The behavior is __undefined__ if the value of ch is not representable as
+- The behavior is __undefined__ if the value of `ch` is not representable as
   `unsigned char` and is not equal to EOF.
 
 Together, this implies a very counter-intuitive result for the following program
 on Solaris:
 
 ```cpp
-#include <stdio.h>
+#include <cstdio>
 #include <cctype>
 
 int main() {
     char ch = '\xa1'; // '¡' in latin-1 locales + UTF-8
-    printf("is whitespace: %i\n", std::isspace(ch));
+    std::printf("is whitespace: %i\n", std::isspace(ch));
     return 0;
 }
 ```
@@ -233,9 +252,10 @@ appear to come with the same caveat, and hence should be safer to use.
 If you're not already aware, the [R Manuals](https://cran.r-project.org/manuals.html), and 
 [Writing R Extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html) in
 particular, are excellent references for common issues encountered when using R.
-They're not perfect -- I often find it difficult to remember which manual
-contains which bit of relevant information I'm looking for -- but they are
-incredibly comprehensive and actively updated by the R Core team.
+They're not perfect -- I often find it difficult to remember which manual 
+contains which bit of relevant information I'm looking for, and where in the
+manual that information lies -- but they are incredibly comprehensive and
+actively updated by the R Core team.
 
 The section in _Writing R Extensions_ on [Portable C and C++ 
 code](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code)
