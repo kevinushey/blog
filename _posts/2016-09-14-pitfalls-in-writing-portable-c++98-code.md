@@ -26,7 +26,7 @@ C++ code that should respect the C++98 standard. This implies that
 may not be available when compiling against the C++98 standard. Notably, `gcc`
 and `clang` often make these features available when compiling with 
 `-std=c++98`, or otherwise make them available if the `-std` flag is not 
-explicitly specified, so it's very easily to accidentally write code that 
+explicitly specified, so it's very easy to accidentally write code that 
 unbeknownst to you does not adhere to  the C++98 standard.
 
 The CRAN Solaris build machines use the Oracle Studio compilers, alongside
