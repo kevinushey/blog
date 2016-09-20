@@ -9,19 +9,25 @@ I've now made enough submissions to [CRAN](https://cran.r-project.org/) that
 have crashed and burned on Solaris, that I think it's now time to put some of
 the pitfalls I've bumped into in writing. My goal is for this blog post to be
 a mini-checklist package authors can run through before submitting a C++-code
-containing package to CRAN.
+containing package to CRAN. (If you happen to be a CRAN maintainer who has
+stumbled upon this blog post, I apologize for all the trouble I've caused
+in my various package submissions. Let this be my recompense.)
 
 For the unaware, the CRAN build machines encompass four main platforms: Linux,
 OS X (macOS), Windows, and Solaris. The compilers used on the Solaris machines
 ([Oracle Solaris Studio](https://www.oracle.com/tools/developerstudio/index.html),
 or more recently, Oracle Developer Studio) are __very__ picky when it comes to
-C++ code that should respect the C++98 standard. This implies none of the
-goodies that are available with the C99 standard, nor some of the more 'minor'
-features of the C++11 standard. Notably, `gcc` and `clang` often make these
-features available when compiling with `-std=c++98`, or otherwise make them
-available if the `-std` flag is not explicitly specified, so it's very easily to
-accidentally fail to adhere to the C++98 standard, without realizing it until
-your package fails to install on Solaris.
+C++ code that should respect the C++98 standard. This implies that
+
+- many of the features that became part of the C99 standard, along with
+- the 'minor' features of the C++11 standard (that might be considered
+  'bug fixes', for things accidentally omitted from the C++98 standard)
+
+may not be available when compiling against the C++98 standard. Notably, `gcc`
+and `clang` often make these features available when compiling with 
+`-std=c++98`, or otherwise make them available if the `-std` flag is not 
+explicitly specified, so it's very easily to accidentally write code that 
+unbeknownst to you does not adhere to  the C++98 standard.
 
 The CRAN Solaris build machines use the Oracle Studio compilers, alongside
 their `stlport4` C++ standard library. Together, these adopt a very strict
