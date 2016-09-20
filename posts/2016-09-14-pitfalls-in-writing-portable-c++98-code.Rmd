@@ -51,7 +51,7 @@ The only reason _not_ to use C++11 nowadays is if your package needs to build on
 older machines (Red Hat Enterprise Linux 5 + `gcc-4.4`, I'm looking at you), but
 even then one can compile with `-std=c++0x` to get a subset of C++11 features.
 (R users in such environments will likely need to manually set
-`CXX1XSTD = -std=c++0x` in a local `~/.R/Makeconf`, or something similar.)
+`CXX1XSTD = -std=c++0x` in a local `~/.R/Makevars`, or something similar.)
 
 For R packages, using C++11 is as simple as placing the following line in your
 `src/Makevars` and `src/Makevars.win` files:
