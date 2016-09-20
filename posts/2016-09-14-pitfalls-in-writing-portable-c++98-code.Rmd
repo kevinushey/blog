@@ -98,7 +98,8 @@ when including these headers.)
 
 > Rule: If you include a C++-style standard library header, reference symbols 
   from the `std` namespace. Prefer using C++-style standard library headers over 
-  the original C counterpart.
+  the original C counterpart. Prefer referencing these symbols explicitly, with
+  the `std::` prefix.
 
 ### C99
 
