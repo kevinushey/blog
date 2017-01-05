@@ -12,13 +12,13 @@ create_post <- new_post <- post <- function(title, tags = "r") {
     paste(date, "-", name, ".Rmd", sep = "")
   )
 
-  yaml <- list(
+  yaml <- as.list(c(
     layout = "post",
     title = title,
     tags = paste(tags, collapse = ", "),
     comments = "true",
     NULL
-  )
+  ))
 
   padding <- max(nchar(names(yaml)))
 
