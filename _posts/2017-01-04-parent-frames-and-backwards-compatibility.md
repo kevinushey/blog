@@ -64,3 +64,13 @@ ml_backwards_compatibility_api <- function() {
 {% endhighlight %}
 
 Now, I can document the 'official' function signature using `iter.max`, but still support users who have written code using `max.iter` in future versions of **sparklyr**. Depending on how aggressive I want to be, I could deprecate the usage of `max.iter` in future versions of **sparklyr**, but now I can at least be confident that any users of **sparklyr** won't see their code suddenly break with an update to **sparklyr**.
+
+We could, of course, have just implemented all this backwards-compatibility stuff inline at the start of the `ml_kmeans()` function as well. Why do I prefer this solution?
+
+1. It minimizes pollution: rather than having multiple lines of code effectively unrelated to what `ml_kmeans()` does, we just have a single line of code calling a function that handles this for us behind the scenes;
+
+2. This function can be re-used elsewhere. You could imagine that we might have other functions, e.g. `ml_linear_regression()`, that take a similarly-named `max.iter` argument. By dropping in this same function call, we get this unified backwards compatibility across all of our functions.
+
+3. We can expand our `ml_backwards_compatibility_api()` function without fuss, and do so without requiring any changes in the functions where it is called (assuming, of course, we are disciplined on how we handle this non-standard evaluation!)
+
+With R, the disciplined use of non-standard evaluation can lead to some very elegant solutions. As long as you're comfortable with the bit of extra magic, allowing certain functions to modify the parent frame makes it possible to provide backwards compatibility in an API in a very clean way.
