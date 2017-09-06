@@ -120,11 +120,11 @@ and our 'recursive' case, accepting one or more arguments
 `T` and `Rest`. (Recall that a template parameter pack can be empty!)
 
 How exactly does this work? Let's trace what happens when
-we try to call, for example, `sum(1, 2, 3)`. This is going
+we try to call, for example, `sum(1.0, 2.0, 3.0)`. This is going
 to be a bit repetitive, but it's worth it to walk through
 the process at least once.
 
-1. The compiler generates code for `sum(1, 2, 3)`.
+1. The compiler generates code for `sum(1.0, 2.0, 3.0)`.
    There are two competing overloads for `sum` here: the
    base case, and the recursive case. Since we're passing in
    three arguments, the base case does not apply (it only
@@ -137,9 +137,9 @@ the process at least once.
 3. The compiler generates code for `t + sum(rest...)`. It
    sees the recursive call to `sum(rest...)`. Note the use of
    `...` to 'unpack' the template argument -- this has the 
-   effect of transforming `sum(rest...)` to `sum(2, 3)`.
+   effect of transforming `sum(rest...)` to `sum(2.0, 3.0)`.
 
-4. The compiler generates code for `sum(2, 3)`. As in the first case,
+4. The compiler generates code for `sum(2.0, 3.0)`. As in the first case,
    there are two competing overloads: the base case, and the
    recursive case. The base case once again does not apply as
    we have more than one argument, so we select the recursive case.
@@ -151,9 +151,9 @@ the process at least once.
    
 6. The compiler generates code for `t + sum(rest...)`. It
    sees the recursive call to `sum(rest...)` -- this time,
-   with `sum(rest...)` expanding to simply `sum(3)`.
+   with `sum(rest...)` expanding to simply `sum(3.0)`.
 
-7. The compiler generates code for `sum(3)`. We have now finally
+7. The compiler generates code for `sum(3.0)`. We have now finally
    hit our base case: the overload taking only `T` is more specialized,
    relative to the overload taking both `T` and `Ts...`. The compiler
    generates code for the base case, and we're done with the recursion.
@@ -169,10 +169,10 @@ to distinguish the various `t`s produced on expansion):
     
 Or, if you prefer seeing it with numbers,
 
-    sum(1, 2, 3);
-    1 + sum(2, 3);
-    1 + (2 + sum(3));
-    1 + (2 + (3));
+    sum(1.0, 2.0, 3.0);
+    1.0 + sum(2.0, 3.0);
+    1.0 + (2.0 + sum(3.0));
+    1.0 + (2.0 + (3.0));
 
 And there we have it. Although our sum implementation makes use of
 compile-time recursion, the end result is a linear addition of code.
@@ -221,16 +221,16 @@ double power_sum(T t, Rest... rest) {
 
 Notice the expression `square(rest)...`. Recall that the `...`
 operator will expand an entire expression, so for example,
-when it's called with `square(4, 6)...`, the compiler expands
-this as `square(4), square(6)`. Let's trace the expansion of
+when it's called with `square(4.0, 6.0)...`, the compiler expands
+this as `square(4.0), square(6.0)`. Let's trace the expansion of
 the resulting code:
 
-    power_sum(2, 4, 6);
-    2 + power_sum(square(rest)...);
-    2 + power_sum(square(4), square(6));
-    2 + (square(4) + power_sum(square(rest)...))
-    2 + (square(4) + power_sum(square(square(6)));
-    2 + (square(4) + (square(square(6))))
+    power_sum(2.0, 4.0, 6.0);
+    2.0 + power_sum(square(rest)...);
+    2.0 + power_sum(square(4.0), square(6.0));
+    2.0 + (square(4.0) + power_sum(square(rest)...))
+    2.0 + (square(4.0) + power_sum(square(square(6.0)));
+    2.0 + (square(4.0) + (square(square(6.0))))
 
 It's important to note that `...` can be used to expand a 
 _whole expression_ containing a parameter pack -- this is 
