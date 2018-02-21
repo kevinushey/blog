@@ -244,7 +244,7 @@ write_utf8 <- function(text, f = tempfile()) {
 }
 {% endhighlight %}
 
-How does this work, exactly? The `useBytes` argument of `readLines()` effectively means, "pretend this text is in the native encoding, and perform no translation". Then, by opening a connection using `encoding = "native.enc"`, the connection receives data that it _assumes_ is in the native encoding, and we have requested to translate to the native encoding. Since we're sending native encoding in, and requesting native encoding out, no translation is performed. R hints at this behavior in the **Encoding** section of `?file`:
+How does this work, exactly? The `useBytes` argument of `writeLines()` effectively means, "pretend this text is in the native encoding, and perform no translation". Then, by opening a connection using `encoding = "native.enc"`, the connection receives data that it _assumes_ is in the native encoding, and we have requested to translate to the native encoding. Since we're sending native encoding in, and requesting native encoding out, no translation is performed. R hints at this behavior in the **Encoding** section of `?file`:
 
 > Additionally, "" and "native.enc" both mean the ‘native’ encoding, that is the internal encoding of the current locale and hence no translation is done.
 
@@ -324,7 +324,7 @@ function (description = "", open = "", blocking = TRUE, encoding = getOption("en
     .Internal(file(description, open, blocking, encoding, method, 
         raw))
 }
-<bytecode: 0x7fd50603aaa0>
+<bytecode: 0x7ffbd4067c98>
 <environment: namespace:base>
 
 {% endhighlight %}
