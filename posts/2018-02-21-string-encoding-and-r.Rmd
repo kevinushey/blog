@@ -155,7 +155,7 @@ In other words, what we _really_ want to do is:
 2. Open a connection that skips any possible translation as well;
 3. Ask `writeLines()` to skip any possible translation.
 
-The `useBytes` argument of `writeLines()` function makes step 2 possible, and opening a connection with `encoding = "native.enc"` makes step 3 possible. Let's re-write our `write_utf8()` routine once more with this in mind:
+Opening a connection with `encoding = "native.enc"` makes step 2 possible, and invoking `writeLines(..., useBytes = TRUE)` makes step 3 possible. Let's re-write our `write_utf8()` routine once more with this in mind:
 
 ```{r}
 write_utf8 <- function(text, f = tempfile()) {

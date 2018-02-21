@@ -216,7 +216,7 @@ In other words, what we _really_ want to do is:
 2. Open a connection that skips any possible translation as well;
 3. Ask `writeLines()` to skip any possible translation.
 
-The `useBytes` argument of `writeLines()` function makes step 2 possible, and opening a connection with `encoding = "native.enc"` makes step 3 possible. Let's re-write our `write_utf8()` routine once more with this in mind:
+Opening a connection with `encoding = "native.enc"` makes step 2 possible, and invoking `writeLines(..., useBytes = TRUE)` makes step 3 possible. Let's re-write our `write_utf8()` routine once more with this in mind:
 
 
 {% highlight r %}
@@ -324,7 +324,7 @@ function (description = "", open = "", blocking = TRUE, encoding = getOption("en
     .Internal(file(description, open, blocking, encoding, method, 
         raw))
 }
-<bytecode: 0x7feab3b3e0a0>
+<bytecode: 0x7fd50603aaa0>
 <environment: namespace:base>
 
 {% endhighlight %}

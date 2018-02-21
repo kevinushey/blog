@@ -107,7 +107,7 @@ p code {
   white-space: nowrap;
 }
 
-div.highlight {
+div.container > div.highlight {
   display: block;
   -webkit-margin-before: 1em;
   -webkit-margin-after: 1em;
