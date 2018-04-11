@@ -247,9 +247,12 @@ the Unicode standard defines a whole slew of [multibyte white space characters](
 figuring out how to handle all of that is beyond the scope of this
 post.
 
-Interestingly, the wide character analogues defined in
+~~Interestingly, the wide character analogues defined in
 [`<cwctype>`](http://en.cppreference.com/w/cpp/string/wide/iswspace) don't
-appear to come with the same caveat, and hence should be safer to use.
+appear to come with the same caveat, and hence should be safer to use.~~
+
+This behaviour appears to apply to the wide character analogues defined in
+[`<cwctype>`](http://en.cppreference.com/w/cpp/header/cwctype) as well.
 
 > Rule: Be careful when using `<cctype>` -- either write your own wrappers, or ensure
   you cast to unsigned char first.
