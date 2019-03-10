@@ -4,7 +4,7 @@ posts:
 	R --vanilla --slave -f 'make.R'
 
 run: posts
-	bundle exec jekyll serve --baseurl ''
+	bundler exec jekyll serve --baseurl ''
 
 .PHONY: clean
 clean:
